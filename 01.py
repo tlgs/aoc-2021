@@ -1,40 +1,36 @@
 """Day 1: Sonar Sweep
 
 Lessons:
-    `itertools.pairwise` becomes available on Python 3.10
+    `itertools.pairwise` becomes available on Python 3.10.
+
+    Using `collections.deque` makes implementing sliding windows trivial.
 """
 import sys
 from collections import deque
 from itertools import islice, tee
 
 
-def _pairwise(iterable):
-    """From: https://github.com/more-itertools/more-itertools"""
-    a, b = tee(iterable)
-    next(b, None)
-    yield from zip(a, b)
-
-
-def _sliding_window(iterable, n):
-    """From: https://github.com/more-itertools/more-itertools"""
-    it = iter(iterable)
-    window = deque(islice(it, n), maxlen=n)
-    if len(window) == n:
-        yield tuple(window)
-    for x in it:
-        window.append(x)
-        yield tuple(window)
-
-
 def increasing(depths):
-    return sum(b > a for a, b in _pairwise(depths))
+    a, b = tee(depths)
+    next(b, None)
+    return sum(prev < curr for prev, curr in zip(a, b))
 
 
 def increasing_window(depths):
-    return sum(sum(b) > sum(a) for a, b in _pairwise(_sliding_window(depths, 3)))
+    total = 0
+    it = iter(depths)
+    window = deque(islice(it, 3), maxlen=3)
+    prev = sum(window)
+    for x in it:
+        window.append(x)
+        v = sum(window)
+        total += v > prev
+        prev = v
+
+    return total
 
 
-class TestClass:
+class Test:
     example = [99, 200, 208, 210, 200, 207, 240, 269, 260, 263]
 
     def test_one(self):
