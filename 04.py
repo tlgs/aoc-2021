@@ -3,18 +3,9 @@ import sys
 
 
 def parse_bingo(stream):
-    numbers = [int(x) for x in next(stream).split(",")]
-    next(stream)  # skip first blank line
-
-    boards = []
-    curr = []
-    for i, line in enumerate(stream, start=1):
-        if i % 6:
-            curr += [int(x) for x in line.split()]
-        else:
-            boards.append(curr)
-            curr = []
-
+    raw_numbers, *raw_boards = stream.read().split("\n\n")
+    numbers = [int(x) for x in raw_numbers.split(",")]
+    boards = [[int(x) for x in board.split()] for board in raw_boards]
     return (numbers, *boards)
 
 
@@ -35,7 +26,8 @@ def score_winner(numbers, *boards):
             horizontal = all(x in marked[j] for x in range(row * 5, row * 5 + 5))
             vertical = all(x in marked[j] for x in range(col, 25, 5))
             if horizontal or vertical:
-                return sum(board[k] for k in range(25) if k not in marked[j]) * n
+                unmarked_sum = sum(v for k, v in enumerate(board) if k not in marked[j])
+                return unmarked_sum * n
 
     raise RuntimeError
 
@@ -63,7 +55,10 @@ def score_loser(numbers, *boards):
             if horizontal or vertical:
                 playing.remove(j)
                 if not playing:
-                    return sum(board[k] for k in range(25) if k not in marked[j]) * n
+                    unmarked_sum = sum(
+                        v for k, v in enumerate(board) if k not in marked[j]
+                    )
+                    return unmarked_sum * n
 
     raise RuntimeError
 
@@ -87,6 +82,8 @@ class Test:
 
 def main():
     puzzle = parse_bingo(sys.stdin)
+
+    print(puzzle)
 
     print("part 1:", score_winner(*puzzle))
     print("part 2:", score_loser(*puzzle))
