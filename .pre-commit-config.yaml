@@ -33,3 +33,4 @@ repos:
     rev: v3.4.1-1
     hooks:
       - id: shfmt
+        args: [-w, -i=2, -ci, -bn, -sr]
