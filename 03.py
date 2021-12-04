@@ -1,4 +1,9 @@
-"""Day 3: Binary Diagnostic"""
+"""Day 3: Binary Diagnostic
+
+Algorithm:
+    Uses `itertools.accumulate` to pre-compute a binary tree;
+    space complexity: O(2^(m+1) - 2) ~ O(2^m)
+"""
 import itertools
 import sys
 
