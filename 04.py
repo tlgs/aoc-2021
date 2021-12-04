@@ -3,15 +3,15 @@ import copy
 import sys
 
 
-def _debug_board(board):
-    print(
-        "\n".join(
-            [
-                " ".join((f"{str(x):>4}" for x in board[k : k + 5]))
-                for k in range(0, 25, 5)
-            ]
-        )
-    )
+def _print_board(board):
+    output = []
+    for i in range(0, 25, 5):
+        line = []
+        for v in board[i : i + 5]:
+            line.append(f"{str(v):>4}")
+        output.append(" ".join(line))
+
+    print("\n".join(output))
 
 
 def parse_bingo(stream):
