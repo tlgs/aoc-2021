@@ -1,17 +1,5 @@
 """Day 4: Giant Squid"""
-import copy
 import sys
-
-
-def _print_board(board):
-    output = []
-    for i in range(0, 25, 5):
-        line = []
-        for v in board[i : i + 5]:
-            line.append(f"{str(v):>4}")
-        output.append(" ".join(line))
-
-    print("\n".join(output))
 
 
 def parse_bingo(stream):
@@ -31,11 +19,12 @@ def parse_bingo(stream):
 
 
 def score_winner(numbers, *boards):
+    marked = [set() for _ in boards]
     for i, n in enumerate(numbers):
-        for board in boards:
+        for j, board in enumerate(boards):
             try:
                 idx = board.index(n)
-                board[idx] = None
+                marked[j].add(idx)
             except ValueError:
                 continue
 
@@ -43,16 +32,17 @@ def score_winner(numbers, *boards):
                 continue
 
             row, col = divmod(idx, 5)
-            horizontal = all(x is None for x in board[row * 5 : row * 5 + 5])
-            vertical = all(x is None for x in board[col::5])
+            horizontal = all(x in marked[j] for x in range(row * 5, row * 5 + 5))
+            vertical = all(x in marked[j] for x in range(col, 25, 5))
             if horizontal or vertical:
-                return sum(x for x in board if x) * n
+                return sum(board[k] for k in range(25) if k not in marked[j]) * n
 
     raise RuntimeError
 
 
 def score_loser(numbers, *boards):
     playing = set(i for i, _ in enumerate(boards))
+    marked = [set() for _ in boards]
     for i, n in enumerate(numbers):
         for j, board in enumerate(boards):
             if j not in playing:
@@ -60,7 +50,7 @@ def score_loser(numbers, *boards):
 
             try:
                 idx = board.index(n)
-                board[idx] = None
+                marked[j].add(idx)
             except ValueError:
                 continue
 
@@ -68,12 +58,12 @@ def score_loser(numbers, *boards):
                 continue
 
             row, col = divmod(idx, 5)
-            horizontal = all(x is None for x in board[row * 5 : row * 5 + 5])
-            vertical = all(x is None for x in board[col::5])
+            horizontal = all(x in marked[j] for x in range(row * 5, row * 5 + 5))
+            vertical = all(x in marked[j] for x in range(col, 25, 5))
             if horizontal or vertical:
-                playing -= {j}
+                playing.remove(j)
                 if not playing:
-                    return sum(x for x in board if x) * n
+                    return sum(board[k] for k in range(25) if k not in marked[j]) * n
 
     raise RuntimeError
 
@@ -89,19 +79,17 @@ class Test:
     # fmt: on
 
     def test_one(self):
-        copied_example = copy.deepcopy(self.example)
-        assert score_winner(*copied_example) == 4512
+        assert score_winner(*self.example) == 4512
 
     def test_two(self):
-        copied_example = copy.deepcopy(self.example)
-        assert score_loser(*copied_example) == 1924
+        assert score_loser(*self.example) == 1924
 
 
 def main():
     puzzle = parse_bingo(sys.stdin)
 
-    print("part 1:", score_winner(*copy.deepcopy(puzzle)))
-    print("part 2:", score_loser(*copy.deepcopy(puzzle)))
+    print("part 1:", score_winner(*puzzle))
+    print("part 2:", score_loser(*puzzle))
 
 
 if __name__ == "__main__":
