@@ -4,23 +4,21 @@ import itertools
 import sys
 
 
-def bits_per_line(stream):
-    for line in stream:
-        yield tuple(map(int, line))
-
-
 def power_consumption(report):
     bit_counts = [0] * len(report[0])
-    for bits in bits_per_line(report):
-        for i, b in enumerate(bits):
-            bit_counts[i] += b
+    for line in report:
+        for i, v in enumerate(line):
+            if v == "1":
+                bit_counts[i] += 1
 
-    threshold = len(report) // 2
     gamma, epsilon = 0, 0
-    for i, v in enumerate(bit_counts[::-1]):
-        one_most_common = v > threshold
-        gamma += one_most_common * 2 ** i
-        epsilon += (not one_most_common) * 2 ** i
+    for i, _ in enumerate(bit_counts):
+        gamma <<= 1
+        epsilon <<= 1
+        if bit_counts[i] > len(report) // 2:
+            gamma += 1
+        else:
+            epsilon += 1
 
     return gamma * epsilon
 
