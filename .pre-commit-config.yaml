@@ -23,3 +23,13 @@ repos:
     hooks:
       - id: isort
         args: ['--profile black']
+
+  - repo: https://github.com/koalaman/shellcheck-precommit
+    rev: v0.8.0
+    hooks:
+      - id: shellcheck
+
+  - repo: https://github.com/scop/pre-commit-shfmt
+    rev: v3.4.1-1
+    hooks:
+      - id: shfmt
