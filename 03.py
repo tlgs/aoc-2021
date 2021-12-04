@@ -1,5 +1,4 @@
 """Day 3: Binary Diagnostic"""
-import collections
 import itertools
 import sys
 
@@ -24,21 +23,19 @@ def power_consumption(report):
 
 
 def life_support_rating(report):
-    counts = collections.defaultdict(int)
+    counts = {}
     for line in report:
         for v in itertools.accumulate(line):
-            counts[v] += 1
+            counts[v] = counts.get(v, 0) + 1
 
     oxygen, co2 = "", ""
     for _, _ in enumerate(report[0]):
-        if counts[oxygen + "1"] >= counts[oxygen + "0"]:
+        if counts.get(oxygen + "1", 0) >= counts.get(oxygen + "0", 0):
             oxygen += "1"
         else:
             oxygen += "0"
 
-        ones = counts[co2 + "1"]
-        zeroes = counts[co2 + "0"]
-        if (ones >= 1 and ones < zeroes) or not zeroes:
+        if counts.get(co2 + "1", sys.maxsize) < counts.get(co2 + "0", sys.maxsize):
             co2 += "1"
         else:
             co2 += "0"
