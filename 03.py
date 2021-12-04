@@ -29,7 +29,7 @@ def life_support_rating(report):
             counts[v] = counts.get(v, 0) + 1
 
     oxygen, co2 = "", ""
-    for _, _ in enumerate(report[0]):
+    for _ in report[0]:
         if counts.get(oxygen + "1", 0) >= counts.get(oxygen + "0", 0):
             oxygen += "1"
         else:
