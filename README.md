@@ -7,6 +7,7 @@
 | 1   | [Sonar Sweep](01.py)                        | ✓      | ✓      |
 | 2   | [Dive!](02.py)                              | ✓      | ✓      |
 | 3   | [Binary Diagnostic](03.py)                  | ✓      | ✓      |
+| 4   | [Giant Squid](04.py)                        | ✓      | ✓      |
 
 ## Setup
 
