@@ -10,55 +10,44 @@ def parse_bingo(stream):
 
 
 def score_winner(numbers, *boards):
+    mapped_boards = [{v: i for i, v in enumerate(board)} for board in boards]
     marked = [set() for _ in boards]
-    for i, n in enumerate(numbers):
-        for j, board in enumerate(boards):
-            try:
-                idx = board.index(n)
-                marked[j].add(idx)
-            except ValueError:
+    for n in numbers:
+        for i, board in enumerate(mapped_boards):
+            if n not in board:
                 continue
 
-            if i < 4:
-                continue
+            idx = board.pop(n)
+            marked[i].add(idx)
 
             row, col = divmod(idx, 5)
-            horizontal = all(x in marked[j] for x in range(row * 5, row * 5 + 5))
-            vertical = all(x in marked[j] for x in range(col, 25, 5))
+            horizontal = set(range(row * 5, row * 5 + 5)) <= marked[i]
+            vertical = set(range(col, 25, 5)) <= marked[i]
             if horizontal or vertical:
-                unmarked_sum = sum(v for k, v in enumerate(board) if k not in marked[j])
-                return unmarked_sum * n
+                return sum(board.keys()) * n
 
     raise RuntimeError
 
 
 def score_loser(numbers, *boards):
     playing = set(i for i, _ in enumerate(boards))
+    mapped_boards = [{v: i for i, v in enumerate(board)} for board in boards]
     marked = [set() for _ in boards]
-    for i, n in enumerate(numbers):
-        for j, board in enumerate(boards):
-            if j not in playing:
+    for n in numbers:
+        for i, board in enumerate(mapped_boards):
+            if i not in playing or n not in board:
                 continue
 
-            try:
-                idx = board.index(n)
-                marked[j].add(idx)
-            except ValueError:
-                continue
-
-            if i < 4:
-                continue
+            idx = board.pop(n)
+            marked[i].add(idx)
 
             row, col = divmod(idx, 5)
-            horizontal = all(x in marked[j] for x in range(row * 5, row * 5 + 5))
-            vertical = all(x in marked[j] for x in range(col, 25, 5))
+            horizontal = set(range(row * 5, row * 5 + 5)) <= marked[i]
+            vertical = set(range(col, 25, 5)) <= marked[i]
             if horizontal or vertical:
-                playing.remove(j)
+                playing.remove(i)
                 if not playing:
-                    unmarked_sum = sum(
-                        v for k, v in enumerate(board) if k not in marked[j]
-                    )
-                    return unmarked_sum * n
+                    return sum(board.keys()) * n
 
     raise RuntimeError
 
@@ -82,8 +71,6 @@ class Test:
 
 def main():
     puzzle = parse_bingo(sys.stdin)
-
-    print(puzzle)
 
     print("part 1:", score_winner(*puzzle))
     print("part 2:", score_loser(*puzzle))
