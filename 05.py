@@ -1,5 +1,4 @@
 """Day 5: Hydrothermal Venture"""
-import collections
 import sys
 
 
@@ -18,51 +17,54 @@ def sig(x):
 
 
 def overlap_one(lines):
-    counts = collections.defaultdict(int)
+    once, twice = set(), set()
     for start, end in lines:
         x1, y1, x2, y2 = *start, *end
-        dx, dy = (x2 - x1), (y2 - y1)
 
-        if dx == 0:
-            s = sig(dy)
-            points = ((x1, i) for i in range(y1, y2 + s, s))
-            for point in points:
-                counts[point] += 1
+        if x2 == x1:
+            sy = sig(y2 - y1)
+            points = {(x1, i) for i in range(y1, y2 + sy, sy)}
 
-        elif dy == 0:
-            s = sig(dx)
-            points = ((i, y1) for i in range(x1, x2 + s, s))
-            for point in points:
-                counts[point] += 1
+        elif y2 == y1:
+            sx = sig(x2 - x1)
+            points = {(i, y1) for i in range(x1, x2 + sx, sx)}
 
-    return sum(v >= 2 for v in counts.values())
+        else:
+            continue
+
+        twice |= points & once
+        once |= points
+
+    return len(twice)
 
 
 def overlap_two(lines):
-    counts = collections.defaultdict(int)
+    once, twice = set(), set()
     for start, end in lines:
         x1, y1, x2, y2 = *start, *end
-        dx, dy = (x2 - x1), (y2 - y1)
-        sx, sy = sig(dx), sig(dy)
 
-        if dx == 0:
-            points = ((x1, i) for i in range(y1, y2 + sy, sy))
-            for point in points:
-                counts[point] += 1
+        if x2 == x1:
+            sy = sig(y2 - y1)
+            points = {(x1, i) for i in range(y1, y2 + sy, sy)}
 
-        elif dy == 0:
-            points = ((i, y1) for i in range(x1, x2 + sx, sx))
-            for point in points:
-                counts[point] += 1
+        elif y2 == y1:
+            sx = sig(x2 - x1)
+            points = {(i, y1) for i in range(x1, x2 + sx, sx)}
 
-        elif abs(dy / dx) == 1:
-            points = (
+        elif abs((y2 - y1) / (x2 - x1)) == 1:
+            sx = sig(x2 - x1)
+            sy = sig(y2 - y1)
+            points = {
                 (i, j) for i, j in zip(range(x1, x2 + sx, sx), range(y1, y2 + sy, sy))
-            )
-            for point in points:
-                counts[point] += 1
+            }
 
-    return sum(v >= 2 for v in counts.values())
+        else:
+            continue
+
+        twice |= points & once
+        once |= points
+
+    return len(twice)
 
 
 class Test:
