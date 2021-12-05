@@ -1,4 +1,6 @@
 """Day 5: Hydrothermal Venture"""
+import collections
+import itertools
 import sys
 
 
@@ -12,59 +14,43 @@ def parse_lines(stream):
     return output
 
 
-def sig(x):
-    return (-1) ** (x < 0)
+def cmp(x):
+    return (x > 0) - (x < 0)
 
 
-def overlap_one(lines):
-    once, twice = set(), set()
-    for start, end in lines:
+def overlap_one(segments):
+    counts = collections.defaultdict(int)
+    for start, end in segments:
         x1, y1, x2, y2 = *start, *end
 
-        if x2 == x1:
-            sy = sig(y2 - y1)
-            points = {(x1, i) for i in range(y1, y2 + sy, sy)}
+        if x1 == x2:
+            dy = cmp(y2 - y1)
+            for i in range(y1, y2 + dy, dy):
+                counts[(x1, i)] += 1
 
-        elif y2 == y1:
-            sx = sig(x2 - x1)
-            points = {(i, y1) for i in range(x1, x2 + sx, sx)}
+        if y1 == y2:
+            dx = cmp(x2 - x1)
+            for i in range(x1, x2 + dx, dx):
+                counts[(i, y1)] += 1
 
-        else:
-            continue
-
-        twice |= points & once
-        once |= points
-
-    return len(twice)
+    return sum(v >= 2 for v in counts.values())
 
 
-def overlap_two(lines):
-    once, twice = set(), set()
-    for start, end in lines:
+def overlap_two(segments):
+    counts = collections.defaultdict(int)
+    for start, end in segments:
         x1, y1, x2, y2 = *start, *end
 
-        if x2 == x1:
-            sy = sig(y2 - y1)
-            points = {(x1, i) for i in range(y1, y2 + sy, sy)}
+        dx = cmp(x2 - x1)
+        dy = cmp(y2 - y1)
 
-        elif y2 == y1:
-            sx = sig(x2 - x1)
-            points = {(i, y1) for i in range(x1, x2 + sx, sx)}
+        for i, j in zip(
+            range(x1, x2 + dx, dx) if dx else itertools.repeat(x1),
+            range(y1, y2 + dy, dy) if dy else itertools.repeat(y1),
+        ):
+            counts[(i, j)] += 1
 
-        elif abs((y2 - y1) / (x2 - x1)) == 1:
-            sx = sig(x2 - x1)
-            sy = sig(y2 - y1)
-            points = {
-                (i, j) for i, j in zip(range(x1, x2 + sx, sx), range(y1, y2 + sy, sy))
-            }
-
-        else:
-            continue
-
-        twice |= points & once
-        once |= points
-
-    return len(twice)
+    return sum(v >= 2 for v in counts.values())
 
 
 class Test:
