@@ -29,7 +29,7 @@ def overlap_one(segments):
             for i in range(y1, y2 + dy, dy):
                 counts[(x1, i)] += 1
 
-        if y1 == y2:
+        elif y1 == y2:
             dx = cmp(x2 - x1)
             for i in range(x1, x2 + dx, dx):
                 counts[(i, y1)] += 1
