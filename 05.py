@@ -6,9 +6,10 @@ import sys
 
 def parse_lines(stream):
     output = []
-    for raw_coords in (line.split(" -> ") for line in stream):
-        split_coords = (raw_coord.split(",") for raw_coord in raw_coords)
-        fst, snd = (tuple(int(a) for a in t) for t in split_coords)
+    for line in stream:
+        raw_fst, raw_snd = line.split(" -> ")
+        fst = tuple(int(x) for x in raw_fst.split(","))
+        snd = tuple(int(x) for x in raw_snd.split(","))
         output.append((fst, snd))
 
     return output
@@ -40,7 +41,6 @@ def overlap_two(segments):
     counts = collections.defaultdict(int)
     for start, end in segments:
         x1, y1, x2, y2 = *start, *end
-
         dx = cmp(x2 - x1)
         dy = cmp(y2 - y1)
 
