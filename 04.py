@@ -3,8 +3,8 @@ import sys
 
 
 class Board:
-    def __init__(self, raw_board):
-        self.positions = dict((v, i) for i, v in enumerate(raw_board))
+    def __init__(self, flat_board):
+        self.positions = dict((v, i) for i, v in enumerate(flat_board))
         self.marked = set()
 
     def check_win(self, idx, n):
@@ -27,12 +27,12 @@ class Board:
 def parse_bingo(stream):
     raw_numbers, *raw_boards = stream.read().split("\n\n")
     numbers = [int(x) for x in raw_numbers.split(",")]
-    boards = [[int(x) for x in board.split()] for board in raw_boards]
-    return (numbers, *boards)
+    flat_boards = [[int(x) for x in board.split()] for board in raw_boards]
+    return (numbers, *flat_boards)
 
 
-def score_winner(numbers, *raw_boards):
-    boards = [Board(rb) for rb in raw_boards]
+def score_winner(numbers, *flat_boards):
+    boards = [Board(fb) for fb in flat_boards]
     for n in numbers:
         for board in boards:
             if (score := board.update(n)) is not None:
@@ -41,8 +41,8 @@ def score_winner(numbers, *raw_boards):
     raise RuntimeError
 
 
-def score_loser(numbers, *raw_boards):
-    boards = [Board(rb) for rb in raw_boards]
+def score_loser(numbers, *flat_boards):
+    boards = [Board(fb) for fb in flat_boards]
     playing = set(i for i, _ in enumerate(boards))
     for n in numbers:
         for i, board in enumerate(boards):
