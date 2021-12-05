@@ -2,6 +2,28 @@
 import sys
 
 
+class Board:
+    def __init__(self, raw_board):
+        self.positions = dict((v, i) for i, v in enumerate(raw_board))
+        self.marked = set()
+
+    def check_win(self, idx, n):
+        row, col = divmod(idx, 5)
+        hz = set(range(row * 5, row * 5 + 5)) <= self.marked
+        vt = set(range(col, 25, 5)) <= self.marked
+
+        return sum(self.positions.keys()) * n if hz or vt else None
+
+    def update(self, n):
+        if n not in self.positions:
+            return None
+
+        idx = self.positions.pop(n)
+        self.marked.add(idx)
+
+        return self.check_win(idx, n)
+
+
 def parse_bingo(stream):
     raw_numbers, *raw_boards = stream.read().split("\n\n")
     numbers = [int(x) for x in raw_numbers.split(",")]
@@ -9,45 +31,28 @@ def parse_bingo(stream):
     return (numbers, *boards)
 
 
-def score_winner(numbers, *boards):
-    mapped_boards = [{v: i for i, v in enumerate(board)} for board in boards]
-    marked = [set() for _ in boards]
+def score_winner(numbers, *raw_boards):
+    boards = [Board(rb) for rb in raw_boards]
     for n in numbers:
-        for i, board in enumerate(mapped_boards):
-            if n not in board:
-                continue
-
-            idx = board.pop(n)
-            marked[i].add(idx)
-
-            row, col = divmod(idx, 5)
-            horizontal = set(range(row * 5, row * 5 + 5)) <= marked[i]
-            vertical = set(range(col, 25, 5)) <= marked[i]
-            if horizontal or vertical:
-                return sum(board.keys()) * n
+        for board in boards:
+            if (score := board.update(n)) is not None:
+                return score
 
     raise RuntimeError
 
 
-def score_loser(numbers, *boards):
+def score_loser(numbers, *raw_boards):
+    boards = [Board(rb) for rb in raw_boards]
     playing = set(i for i, _ in enumerate(boards))
-    mapped_boards = [{v: i for i, v in enumerate(board)} for board in boards]
-    marked = [set() for _ in boards]
     for n in numbers:
-        for i, board in enumerate(mapped_boards):
-            if i not in playing or n not in board:
+        for i, board in enumerate(boards):
+            if i not in playing:
                 continue
 
-            idx = board.pop(n)
-            marked[i].add(idx)
-
-            row, col = divmod(idx, 5)
-            horizontal = set(range(row * 5, row * 5 + 5)) <= marked[i]
-            vertical = set(range(col, 25, 5)) <= marked[i]
-            if horizontal or vertical:
+            if (score := board.update(n)) is not None:
                 playing.remove(i)
                 if not playing:
-                    return sum(board.keys()) * n
+                    return score
 
     raise RuntimeError
 
