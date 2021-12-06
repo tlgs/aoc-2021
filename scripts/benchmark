@@ -7,7 +7,7 @@ tmpdir=$(mktemp -d)
 days=$(find . -maxdepth 1 -name '*.py' -print0 | xargs -0 -I {} basename {} .py | sort | xargs | tr ' ' ',')
 
 hyperfine \
-  -w 50 \
+  -w 10 \
   --export-markdown "$tmpdir/table.md" \
   -L day "$days" \
   'python {day}.py < data/{day}.txt'
