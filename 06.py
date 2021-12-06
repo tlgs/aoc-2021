@@ -14,10 +14,10 @@ def simulate(ages, days):
         for i in range(8, -1, -1):
             curr = school.get(i, 0)
             school[i] = prev
-            prev = curr
-
             if i == 0:
                 school[6] += curr
+
+            prev = curr
 
     return sum(v for v in school.values())
 
