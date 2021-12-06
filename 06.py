@@ -10,16 +10,14 @@ import sys
 def simulate(ages, days):
     school = collections.Counter(ages)
     for _ in range(days):
-        prev = school.get(0, 0)
-        for i in range(8, -1, -1):
-            curr = school.get(i, 0)
-            school[i] = prev
-            if i == 0:
-                school[6] += curr
+        resets = school.get(0, 0)
+        for i in range(8):
+            school[i] = school.get(i + 1, 0)
 
-            prev = curr
+        school[8] = resets
+        school[6] += resets
 
-    return sum(v for v in school.values())
+    return sum(school.values())
 
 
 class Test:
