@@ -9,10 +9,10 @@ See this [Python-Dev thread](https://mail.python.org/pipermail/python-dev/2018-M
 
 | Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
 |:---|---:|---:|---:|---:|
-| `python 01.py < data/01.txt` | 17.7 ± 0.8 | 16.9 | 21.5 | 1.12 ± 0.06 |
-| `python 02.py < data/02.txt` | 15.8 ± 0.6 | 14.9 | 17.2 | 1.00 |
-| `python 03.py < data/03.txt` | 18.5 ± 0.7 | 17.7 | 20.7 | 1.17 ± 0.06 |
-| `python 04.py < data/04.txt` | 20.5 ± 0.8 | 19.3 | 22.2 | 1.30 ± 0.07 |
-| `python 05.py < data/05.txt` | 168.9 ± 4.5 | 163.2 | 175.8 | 10.71 ± 0.49 |
-| `python 06.py < data/06.txt` | 17.7 ± 0.7 | 16.5 | 19.8 | 1.12 ± 0.06 |
-| `python 07.py < data/07.txt` | 406.3 ± 11.6 | 388.5 | 419.4 | 25.77 ± 1.20 |
+| `python 01.py < data/01.txt` | 18.6 ± 0.8 | 17.0 | 21.1 | 1.15 ± 0.07 |
+| `python 02.py < data/02.txt` | 16.2 ± 0.7 | 14.9 | 18.1 | 1.00 |
+| `python 03.py < data/03.txt` | 19.4 ± 0.9 | 17.8 | 22.0 | 1.20 ± 0.08 |
+| `python 04.py < data/04.txt` | 21.0 ± 0.9 | 19.5 | 22.8 | 1.30 ± 0.08 |
+| `python 05.py < data/05.txt` | 178.4 ± 6.1 | 170.3 | 193.6 | 10.99 ± 0.62 |
+| `python 06.py < data/06.txt` | 18.1 ± 0.9 | 16.6 | 20.4 | 1.12 ± 0.07 |
+| `python 07.py < data/07.txt` | 33.0 ± 1.5 | 30.8 | 37.1 | 2.03 ± 0.13 |
