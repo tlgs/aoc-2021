@@ -10,8 +10,4 @@
 | 4   | [Giant Squid](04.py)                        | ✓      | ✓      |
 | 5   | [Hydrothermal Venture](05.py)               | ✓      | ✓      |
 | 6   | [Lanternfish](06.py)                        | ✓      | ✓      |
-
-## Setup
-
-1. `echo 'layout python' > .envrc && direnv allow`
-2. `pre-commit install`
+| 7   | [The Treachery of Whales](07.py)            | ✓      | ✓      |
