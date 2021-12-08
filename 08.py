@@ -4,6 +4,15 @@ import functools
 import sys
 
 
+def parse_lines(stream):
+    puzzle = []
+    for line in stream:
+        patterns, outputs = [x.split() for x in line.split("|")]
+        puzzle.append((patterns, outputs))
+
+    return puzzle
+
+
 def easy_digits(puzzle):
     counts = 0
     for _, output in puzzle:
@@ -54,171 +63,28 @@ def outputs_sum(puzzle):
 
 
 class Test:
-    example = [
-        (
-            [
-                "be",
-                "cfbegad",
-                "cbdgef",
-                "fgaecd",
-                "cgeb",
-                "fdcge",
-                "agebfd",
-                "fecdb",
-                "fabcd",
-                "edb",
-            ],
-            ["fdgacbe", "cefdb", "cefbgd", "gcbe"],
-        ),
-        (
-            [
-                "edbfga",
-                "begcd",
-                "cbg",
-                "gc",
-                "gcadebf",
-                "fbgde",
-                "acbgfd",
-                "abcde",
-                "gfcbed",
-                "gfec",
-            ],
-            ["fcgedb", "cgb", "dgebacf", "gc"],
-        ),
-        (
-            [
-                "fgaebd",
-                "cg",
-                "bdaec",
-                "gdafb",
-                "agbcfd",
-                "gdcbef",
-                "bgcad",
-                "gfac",
-                "gcb",
-                "cdgabef",
-            ],
-            ["cg", "cg", "fdcagb", "cbg"],
-        ),
-        (
-            [
-                "fbegcd",
-                "cbd",
-                "adcefb",
-                "dageb",
-                "afcb",
-                "bc",
-                "aefdc",
-                "ecdab",
-                "fgdeca",
-                "fcdbega",
-            ],
-            ["efabcd", "cedba", "gadfec", "cb"],
-        ),
-        (
-            [
-                "aecbfdg",
-                "fbg",
-                "gf",
-                "bafeg",
-                "dbefa",
-                "fcge",
-                "gcbea",
-                "fcaegb",
-                "dgceab",
-                "fcbdga",
-            ],
-            ["gecf", "egdcabf", "bgf", "bfgea"],
-        ),
-        (
-            [
-                "fgeab",
-                "ca",
-                "afcebg",
-                "bdacfeg",
-                "cfaedg",
-                "gcfdb",
-                "baec",
-                "bfadeg",
-                "bafgc",
-                "acf",
-            ],
-            ["gebdcfa", "ecba", "ca", "fadegcb"],
-        ),
-        (
-            [
-                "dbcfg",
-                "fgd",
-                "bdegcaf",
-                "fgec",
-                "aegbdf",
-                "ecdfab",
-                "fbedc",
-                "dacgb",
-                "gdcebf",
-                "gf",
-            ],
-            ["cefg", "dcbef", "fcge", "gbcadfe"],
-        ),
-        (
-            [
-                "bdfegc",
-                "cbegaf",
-                "gecbf",
-                "dfcage",
-                "bdacg",
-                "ed",
-                "bedf",
-                "ced",
-                "adcbefg",
-                "gebcd",
-            ],
-            ["ed", "bcgafe", "cdgba", "cbgef"],
-        ),
-        (
-            [
-                "egadfb",
-                "cdbfeg",
-                "cegd",
-                "fecab",
-                "cgb",
-                "gbdefca",
-                "cg",
-                "fgcdab",
-                "egfdb",
-                "bfceg",
-            ],
-            ["gbdfcae", "bgc", "cg", "cgb"],
-        ),
-        (
-            [
-                "gcafb",
-                "gcf",
-                "dcaebfg",
-                "ecagb",
-                "gf",
-                "abcdeg",
-                "gaef",
-                "cafbge",
-                "fdbac",
-                "fegbdc",
-            ],
-            ["fgae", "cfgab", "fg", "bagce"],
-        ),
-    ]
+    example = """\
+be cfbegad cbdgef fgaecd cgeb fdcge agebfd fecdb fabcd edb | fdgacbe cefdb cefbgd gcbe
+edbfga begcd cbg gc gcadebf fbgde acbgfd abcde gfcbed gfec | fcgedb cgb dgebacf gc
+fgaebd cg bdaec gdafb agbcfd gdcbef bgcad gfac gcb cdgabef | cg cg fdcagb cbg
+fbegcd cbd adcefb dageb afcb bc aefdc ecdab fgdeca fcdbega | efabcd cedba gadfec cb
+aecbfdg fbg gf bafeg dbefa fcge gcbea fcaegb dgceab fcbdga | gecf egdcabf bgf bfgea
+fgeab ca afcebg bdacfeg cfaedg gcfdb baec bfadeg bafgc acf | gebdcfa ecba ca fadegcb
+dbcfg fgd bdegcaf fgec aegbdf ecdfab fbedc dacgb gdcebf gf | cefg dcbef fcge gbcadfe
+bdfegc cbegaf gecbf dfcage bdacg ed bedf ced adcbefg gebcd | ed bcgafe cdgba cbgef
+egadfb cdbfeg cegd fecab cgb gbdefca cg fgcdab egfdb bfceg | gbdfcae bgc cg cgb
+gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
+""".splitlines()
 
     def test_one(self):
-        assert easy_digits(self.example) == 26
+        assert easy_digits(parse_lines(self.example)) == 26
 
     def test_two(self):
-        assert outputs_sum(self.example) == 61229
+        assert outputs_sum(parse_lines(self.example)) == 61229
 
 
 def main():
-    puzzle = []
-    for line in sys.stdin:
-        patterns, outputs = [x.split() for x in line.split("|")]
-        puzzle.append((patterns, outputs))
+    puzzle = parse_lines(sys.stdin)
 
     print("part 1:", easy_digits(puzzle))
     print("part 2:", outputs_sum(puzzle))
