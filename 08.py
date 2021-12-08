@@ -14,11 +14,7 @@ def parse_lines(stream):
 
 
 def easy_digits(puzzle):
-    counts = 0
-    for _, output in puzzle:
-        counts += sum(len(seq) in {2, 3, 4, 7} for seq in output)
-
-    return counts
+    return sum(len(x) in {2, 3, 4, 7} for _, digits in puzzle for x in digits)
 
 
 def outputs_sum(puzzle):
