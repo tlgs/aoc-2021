@@ -17,38 +17,37 @@ def outputs_sum(puzzle):
     for patterns, outputs in puzzle:
         segments = collections.defaultdict(list)
         for p in patterns:
-            segments[len(p)].append(p)
+            segments[len(p)].append(set(p))
 
-        cf = set(segments[2][0])
-        bd = set(segments[4][0]) - set(segments[2][0])
-        abfg = functools.reduce(set.intersection, [set(s) for s in segments[6]])
+        cf = segments[2][0]
+        bd = segments[4][0] - segments[2][0]
+        abfg = functools.reduce(set.intersection, segments[6])
 
-        a = (set(segments[3][0]) - set(segments[2][0])).pop()
+        a = segments[3][0] - segments[2][0]
 
-        f = (cf & abfg).pop()
-        b = (bd & abfg).pop()
+        f = cf & abfg
+        b = bd & abfg
 
-        c = segments[2][0].replace(f, "")
-        d = (set(segments[4][0]) - set(b + c + f)).pop()
+        c = segments[2][0] - f
+        d = segments[4][0] - (b | c | f)
 
-        g = (abfg - set(a + b + f)).pop()
+        g = abfg - (a | b | f)
 
-        e = (set(segments[7][0]) - set(a + b + c + d + f + g)).pop()
+        e = segments[7][0] - (a | b | c | d | f | g)
 
         translator = {
-            frozenset(a + b + c + e + f + g): "0",
-            frozenset(c + f): "1",
-            frozenset(a + c + d + e + g): "2",
-            frozenset(a + c + d + f + g): "3",
-            frozenset(b + c + d + f): "4",
-            frozenset(a + b + d + f + g): "5",
-            frozenset(a + b + d + e + f + g): "6",
-            frozenset(a + c + f): "7",
-            frozenset(a + b + c + d + e + f + g): "8",
-            frozenset(a + b + c + d + f + g): "9",
+            frozenset(a | b | c | e | f | g): "0",
+            frozenset(c | f): "1",
+            frozenset(a | c | d | e | g): "2",
+            frozenset(a | c | d | f | g): "3",
+            frozenset(b | c | d | f): "4",
+            frozenset(a | b | d | f | g): "5",
+            frozenset(a | b | d | e | f | g): "6",
+            frozenset(a | c | f): "7",
+            frozenset(a | b | c | d | e | f | g): "8",
+            frozenset(a | b | c | d | f | g): "9",
         }
         n = "".join([translator[frozenset(x)] for x in outputs])
-
         total += int(n)
 
     return total
