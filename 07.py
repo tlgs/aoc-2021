@@ -1,4 +1,4 @@
-"""Day 6: The Treachery of Whales
+"""Day 7: The Treachery of Whales
 
 Algorithm:
     In part 1, the fuel cost function f(k) = ∑ |k - xi|,
