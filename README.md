@@ -11,3 +11,4 @@
 | 5   | [Hydrothermal Venture](05.py)               | ✓      | ✓      |
 | 6   | [Lanternfish](06.py)                        | ✓      | ✓      |
 | 7   | [The Treachery of Whales](07.py)            | ✓      | ✓      |
+| 8   | [Seven Segment Search](08.py)               | ✓      | ✓      |
