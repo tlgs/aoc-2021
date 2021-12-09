@@ -50,19 +50,17 @@ def mult_three_largest_basins(heightmap):
             upstream[(x, y)] = bigger_neighbours
 
     basins = []
-    seen = set()
     for start in low_points:
-        count = 0
+        seen = set()
         stack = [start]
         while stack:
             x, y = stack.pop()
-            count += 1
+            seen.add((x, y))
             for point in upstream[(x, y)]:
                 if point not in seen:
-                    seen.add(point)
                     stack.append(point)
 
-        basins.append(count)
+        basins.append(len(seen))
 
     a, b, c, *_ = sorted(basins, reverse=True)
     return a * b * c
