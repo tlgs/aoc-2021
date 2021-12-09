@@ -15,10 +15,12 @@ def risk_low_points(heightmap):
         for x, v in enumerate(row):
             for p, q in surrounding(x, y):
                 try:
-                    if heightmap[q][p] < v:
+                    if q < 0 or p < 0:
+                        raise IndexError
+                    elif heightmap[q][p] <= v:
                         break
                 except IndexError:
-                    continue
+                    ...
             else:
                 total += v + 1
 
