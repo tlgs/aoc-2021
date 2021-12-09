@@ -14,13 +14,13 @@ def risk_low_points(heightmap):
     for y, row in enumerate(heightmap):
         for x, v in enumerate(row):
             for p, q in surrounding(x, y):
+                if q < 0 or p < 0:
+                    continue
                 try:
-                    if q < 0 or p < 0:
-                        raise IndexError
-                    elif heightmap[q][p] <= v:
+                    if heightmap[q][p] <= v:
                         break
                 except IndexError:
-                    ...
+                    continue
             else:
                 total += v + 1
 
@@ -32,12 +32,12 @@ def mult_three_largest_basins(heightmap):
     low_points = []
     for y, row in enumerate(heightmap):
         for x, v in enumerate(row):
-            bigger_neighbours = []
+            ascending = []
             low = True
             for p, q in surrounding(x, y):
+                if q < 0 or p < 0:
+                    continue
                 try:
-                    if q < 0 or p < 0:
-                        raise IndexError
                     w = heightmap[q][p]
                 except IndexError:
                     continue
@@ -45,11 +45,11 @@ def mult_three_largest_basins(heightmap):
                 if w < v:
                     low = False
                 elif w > v and w != 9:
-                    bigger_neighbours.append((p, q))
+                    ascending.append((p, q))
 
             if low:
                 low_points.append((x, y))
-            upstream[(x, y)] = bigger_neighbours
+            upstream[x, y] = ascending
 
     basins = []
     for start in low_points:
@@ -58,7 +58,7 @@ def mult_three_largest_basins(heightmap):
         while stack:
             x, y = stack.pop()
             seen.add((x, y))
-            for point in upstream[(x, y)]:
+            for point in upstream[x, y]:
                 if point not in seen:
                     stack.append(point)
 
