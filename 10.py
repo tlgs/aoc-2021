@@ -22,29 +22,24 @@ def syntax_error_score(lines):
 
 
 def middle_autocomplete_score(lines):
-    openers = {"(", "[", "{", "<"}
     pairs = {")": "(", "]": "[", "}": "{", ">": "<"}
-    score = {"(": 1, "[": 2, "{": 3, "<": 4}
+    points = {"(": 1, "[": 2, "{": 3, "<": 4}
     scores = []
     for line in lines:
         stack = []
-        corrupted = False
         for c in line:
-            if c in openers:
+            if c in points:
                 stack.append(c)
             elif pairs[c] == stack[-1]:
                 stack.pop()
             else:
-                corrupted = True
                 break
 
-        if corrupted:
-            continue
-
-        total = 0
-        while stack:
-            total = total * 5 + score[stack.pop()]
-        scores.append(total)
+        else:
+            total = 0
+            while stack:
+                total = total * 5 + points[stack.pop()]
+            scores.append(total)
 
     scores.sort()
     return scores[len(scores) // 2]
