@@ -13,3 +13,4 @@
 | 7   | [The Treachery of Whales](07.py)            | ✓      | ✓      |
 | 8   | [Seven Segment Search](08.py)               | ✓      | ✓      |
 | 9   | [Smoke Basin](09.py)                        | ✓      | ✓      |
+| 10  | [Syntax Scoring](10.py)                     | ✓      | ✓      |
