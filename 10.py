@@ -3,19 +3,18 @@ import sys
 
 
 def syntax_error_score(lines):
-    openers = {"(", "[", "{", "<"}
     pairs = {")": "(", "]": "[", "}": "{", ">": "<"}
-    score = {")": 3, "]": 57, "}": 1197, ">": 25137}
+    points = {"(": 3, "[": 57, "{": 1197, "<": 25137}
     total = 0
     for line in lines:
         stack = []
         for c in line:
-            if c in openers:
+            if c in points:
                 stack.append(c)
             elif pairs[c] == stack[-1]:
                 stack.pop()
             else:
-                total += score[c]
+                total += points[pairs[c]]
                 break
 
     return total
