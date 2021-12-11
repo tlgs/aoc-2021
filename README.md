@@ -14,3 +14,4 @@
 | 8   | [Seven Segment Search](08.py)               | ✓      | ✓      |
 | 9   | [Smoke Basin](09.py)                        | ✓      | ✓      |
 | 10  | [Syntax Scoring](10.py)                     | ✓      | ✓      |
+| 11  | [Dumbo Octopus](11.py)                      | ✓      | ✓      |
