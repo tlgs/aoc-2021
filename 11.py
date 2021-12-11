@@ -1,5 +1,4 @@
 """Day 11: Dumbo Octopus"""
-import copy
 import itertools
 import sys
 
@@ -24,44 +23,44 @@ def parse_lines(stream):
     return octopuses
 
 
-def simulate(octopuses, steps):
-    flashes = 0
-    for _ in range(steps):
-        for x, y in octopuses:
-            octopuses[x, y] += 1
-        while True:
-            for (x, y), v in octopuses.items():
-                if v > 9:
-                    flashes += 1
-                    octopuses[x, y] = 0
-                    for t in adjacent(x, y):
-                        if t in octopuses and octopuses[t] != 0:
-                            octopuses[t] += 1
-                    break
+def flash(octopuses, coord):
+    octopuses[coord] = 0
+    counts = 0
+    for t in adjacent(*coord):
+        if t in octopuses and octopuses[t] != 0:
+            if octopuses[t] + 1 > 9:
+                counts += flash(octopuses, t)
             else:
-                break
+                octopuses[t] += 1
 
-    return flashes
+    return 1 + counts
+
+
+def simulate(octopuses, steps):
+    total = 0
+    for _ in range(steps):
+        for k in octopuses:
+            octopuses[k] += 1
+
+        for k in octopuses:
+            if octopuses[k] > 9:
+                total += flash(octopuses, k)
+
+    return total
 
 
 def synchronous_flash(octopuses):
+    n = len(octopuses)
     for i in itertools.count(start=1):
-        flashes = 0
-        for x, y in octopuses:
-            octopuses[x, y] += 1
-        while True:
-            for (x, y), v in octopuses.items():
-                if v > 9:
-                    octopuses[x, y] = 0
-                    flashes += 1
-                    for t in adjacent(x, y):
-                        if t in octopuses and octopuses[t] != 0:
-                            octopuses[t] += 1
-                    break
-            else:
-                break
+        for k in octopuses:
+            octopuses[k] += 1
 
-        if flashes == 100:
+        total = 0
+        for k in octopuses:
+            if octopuses[k] > 9:
+                total += flash(octopuses, k)
+
+        if total == n:
             return i
 
     raise RuntimeError
@@ -91,8 +90,8 @@ class Test:
 def main():
     puzzle = parse_lines(sys.stdin)
 
-    print("part 1:", simulate(copy.deepcopy(puzzle), 100))
-    print("part 2:", synchronous_flash(puzzle))
+    print("part 1:", simulate(puzzle.copy(), 100))
+    print("part 2:", synchronous_flash(puzzle.copy()))
 
 
 if __name__ == "__main__":
