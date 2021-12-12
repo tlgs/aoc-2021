@@ -15,3 +15,4 @@
 | 9   | [Smoke Basin](09.py)                        | ✓      | ✓      |
 | 10  | [Syntax Scoring](10.py)                     | ✓      | ✓      |
 | 11  | [Dumbo Octopus](11.py)                      | ✓      | ✓      |
+| 12  | [Passage Pathing](12.py)                    | ✓      | ✓      |
