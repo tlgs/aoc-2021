@@ -1,4 +1,12 @@
-"""Day 12: Passage Pathing"""
+"""Day 12: Passage Pathing
+
+Lessons:
+    No clean direct way to get a "frozen dictionary";
+    If you only care about __getitem__ using a namedtuple might suffice
+
+Notes:
+    `import pytest` adds ~100ms to runtime
+"""
 import collections
 import functools
 import sys
