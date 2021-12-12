@@ -9,6 +9,7 @@ def parse_lines(stream):
     edges = collections.defaultdict(list)
     for line in stream:
         a, b = line.rstrip().split("-")
+
         edges[a].append(b)
         edges[b].append(a)
 
@@ -17,23 +18,20 @@ def parse_lines(stream):
 
 def distinct_paths(edges):
     count = 0
-    stack = [(["start"], {"start"})]
+    stack = [["start"]]
     while stack:
-        path, seen = stack.pop()
+        path = stack.pop()
+        seen = {v for v in path if v.islower()}
         for node in edges[path[-1]]:
             if node == "end":
                 count += 1
                 continue
 
-            elif node.islower():
-                if node in seen:
-                    continue
-                this_seen = seen | {node}
+            elif node in seen:
+                continue
 
             else:
-                this_seen = seen.copy()
-
-            stack.append((path + [node], this_seen))
+                stack.append(path + [node])
 
     return count
 
@@ -43,21 +41,22 @@ def distinct_paths_two(edges):
     stack = [(["start"], False)]
     while stack:
         path, twice = stack.pop()
-        seen = {v for v in path}
+        seen = {v for v in path if v.islower()}
         for node in edges[path[-1]]:
-            this_twice = twice
-            if node == "end":
+            if node == "start":
+                continue
+
+            elif node == "end":
                 count += 1
                 continue
 
-            if node.islower():
-                if node in seen:
-                    if twice or node == "start":
-                        continue
-                    else:
-                        this_twice = True
+            elif node in seen:
+                if twice:
+                    continue
+                stack.append((path + [node], True))
 
-            stack.append((path + [node], this_twice))
+            else:
+                stack.append((path + [node], twice))
 
     return count
 
