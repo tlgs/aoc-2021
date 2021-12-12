@@ -1,5 +1,6 @@
 """Day 12: Passage Pathing"""
 import collections
+import functools
 import sys
 
 import pytest
@@ -9,56 +10,43 @@ def parse_lines(stream):
     edges = collections.defaultdict(list)
     for line in stream:
         a, b = line.rstrip().split("-")
-
         edges[a].append(b)
         edges[b].append(a)
 
-    return edges
+    for k in edges:
+        edges[k] = tuple(edges[k])
+
+    # frozendict when
+    FrozenEdges = collections.namedtuple("FrozenEdges", edges.keys())
+    fe = FrozenEdges(**edges)
+    return fe
 
 
-def distinct_paths(edges):
-    count = 0
-    stack = [["start"]]
-    while stack:
-        path = stack.pop()
-        seen = {v for v in path if v.islower()}
-        for node in edges[path[-1]]:
-            if node == "end":
-                count += 1
-                continue
+@functools.lru_cache(maxsize=None)
+def dfs(edges, curr, seen, twice=True):
+    counts = 0
+    for node in getattr(edges, curr):
+        if node == "end":
+            counts += 1
 
-            elif node in seen:
-                continue
+        elif not node.islower():
+            counts += dfs(edges, node, seen, twice)
 
-            else:
-                stack.append(path + [node])
+        elif node != "start":
+            if node not in seen:
+                counts += dfs(edges, node, seen | {node}, twice)
+            elif not twice:
+                counts += dfs(edges, node, seen | {node}, True)
 
-    return count
+    return counts
+
+
+def distinct_paths_one(edges):
+    return dfs(edges, "start", frozenset())
 
 
 def distinct_paths_two(edges):
-    count = 0
-    stack = [(["start"], False)]
-    while stack:
-        path, twice = stack.pop()
-        seen = {v for v in path if v.islower()}
-        for node in edges[path[-1]]:
-            if node == "start":
-                continue
-
-            elif node == "end":
-                count += 1
-                continue
-
-            elif node in seen:
-                if twice:
-                    continue
-                stack.append((path + [node], True))
-
-            else:
-                stack.append((path + [node], twice))
-
-    return count
+    return dfs(edges, "start", frozenset(), False)
 
 
 EXAMPLE1 = """\
@@ -112,7 +100,7 @@ class Test:
         [(EXAMPLE1, 10), (EXAMPLE2, 19), (EXAMPLE3, 226)],
     )
     def test_one(self, test_input, expected):
-        assert distinct_paths(parse_lines(test_input)) == expected
+        assert distinct_paths_one(parse_lines(test_input)) == expected
 
     @pytest.mark.parametrize(
         "test_input,expected",
@@ -125,7 +113,7 @@ class Test:
 def main():
     puzzle = parse_lines(sys.stdin)
 
-    print("part 1:", distinct_paths(puzzle))
+    print("part 1:", distinct_paths_one(puzzle))
     print("part 2:", distinct_paths_two(puzzle))
 
 
