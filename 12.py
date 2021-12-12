@@ -34,17 +34,21 @@ def parse_lines(stream):
 def dfs(edges, curr, seen, twice=True):
     counts = 0
     for node in getattr(edges, curr):
-        if node == "end":
+        if node == "start":
+            continue
+
+        elif node == "end":
             counts += 1
+            continue
 
-        elif not node.islower():
-            counts += dfs(edges, node, seen, twice)
-
-        elif node != "start":
+        elif node.islower():
             if node not in seen:
                 counts += dfs(edges, node, seen | {node}, twice)
             elif not twice:
                 counts += dfs(edges, node, seen | {node}, True)
+
+        else:
+            counts += dfs(edges, node, seen, twice)
 
     return counts
 
