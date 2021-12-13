@@ -3,7 +3,8 @@
 Lessons:
     `itertools.pairwise` becomes available on Python 3.10.
 
-    Using `collections.deque` makes implementing sliding windows trivial.
+    Using `collections.deque` with the `maxlen` argument makes implementing
+    sliding windows trivial.
 """
 import sys
 from collections import deque
@@ -19,13 +20,10 @@ def increasing(depths):
 def increasing_window(depths):
     total = 0
     it = iter(depths)
-    window = deque(islice(it, 3), maxlen=3)
-    prev = sum(window)
+    window = deque(islice(it, 3))
     for x in it:
         window.append(x)
-        v = sum(window)
-        total += v > prev
-        prev = v
+        total += x > window.popleft()
 
     return total
 
