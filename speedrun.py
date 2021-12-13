@@ -3,29 +3,7 @@ import itertools
 import timeit
 
 
-def day01():
-    with open("data/01.txt") as f:
-        puzzle = [int(x) for x in f]
-
-    # pre-compute first two values
-    out_one = sum(prev < curr for prev, curr in zip(puzzle[:2], puzzle[1:3]))
-
-    ita, itb = itertools.tee(puzzle[2:])
-    next(itb, None)
-
-    out_two = 0
-    window = collections.deque(puzzle[:3])
-    for prev, curr in zip(ita, itb):
-        out_one += prev < curr
-
-        window.append(curr)
-        out_two += curr > window.popleft()
-
-    assert out_one == 1390
-    assert out_two == 1457
-
-
-def format_time(sec):
+def _fmt_time(sec):
     time = sec * 1000
     unit = "ms"
     if time < 1:
@@ -33,6 +11,28 @@ def format_time(sec):
         unit = "μs"
 
     return f"{int(time)} {unit}"
+
+
+def day01(filename="data/01.txt"):
+    with open(filename) as f:
+        puzzle = [int(x) for x in f]
+
+    # pre-compute first two values
+    part_one = sum(prev < curr for prev, curr in zip(puzzle[:2], puzzle[1:3]))
+
+    ita, itb = itertools.tee(puzzle[2:])
+    next(itb, None)
+
+    part_two = 0
+    window = collections.deque(puzzle[:3])
+    for prev, curr in zip(ita, itb):
+        part_one += prev < curr
+
+        window.append(curr)
+        part_two += curr > window.popleft()
+
+    assert part_one == 1390
+    assert part_two == 1457
 
 
 def main():
@@ -45,12 +45,12 @@ def main():
             continue
 
         avg = total_time / n
-        print(format_time(avg))
+        print(_fmt_time(avg))
 
         runtime += avg
 
     print("-" * 6)
-    print(format_time(runtime))
+    print(_fmt_time(runtime))
 
 
 if __name__ == "__main__":
