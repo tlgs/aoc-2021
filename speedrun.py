@@ -1,16 +1,17 @@
+import argparse
 import collections
 import itertools
 import timeit
 
 
 def _fmt_time(sec):
-    time = sec * 1000
+    t = sec * 1000
     unit = "ms"
-    if time < 1:
-        time *= 1000
+    if t < 1:
+        t *= 1000
         unit = "μs"
 
-    return f"{int(time)} {unit}"
+    return f"{t:.2f} {unit}"
 
 
 def day01(filename="data/01.txt"):
@@ -35,7 +36,38 @@ def day01(filename="data/01.txt"):
     assert part_two == 1457
 
 
+def day02(filename="data/02.txt"):
+    with open(filename) as f:
+        puzzle = list(f)
+
+    pos_one, depth_one = 0, 0
+    pos_two, depth_two, aim = 0, 0, 0
+    for line in puzzle:
+        instruction, value = line.split()
+        value = int(value)
+        if instruction == "forward":
+            pos_one += value
+            pos_two += value
+            depth_two += aim * value
+        elif instruction == "down":
+            depth_one += value
+            aim += value
+        elif instruction == "up":
+            depth_one -= value
+            aim -= value
+
+    assert pos_one * depth_one == 1868935
+    assert pos_two * depth_two == 1965970888
+
+
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--raw", action="store_true")
+    args = parser.parse_args()
+
+    if not args.raw:
+        print("┌───────┬──────────────┐")
+
     runtime = 0
     for i in range(1, 26):
         t = timeit.Timer(f"day{i:02}()", globals=globals())
@@ -44,13 +76,18 @@ def main():
         except NameError:
             continue
 
-        avg = total_time / n
-        print(_fmt_time(avg))
+        mean_time = total_time / n
+        if args.raw:
+            print(f"{i} {mean_time * 1000}")
+        else:
+            print(f"│ {i:5} │ {_fmt_time(mean_time):>12} │")
 
-        runtime += avg
+        runtime += mean_time
 
-    print("-" * 6)
-    print(_fmt_time(runtime))
+    if not args.raw:
+        print("├───────┼──────────────┤")
+        print(f"│ total │ {_fmt_time(runtime):>12} │")
+        print("└───────┴──────────────┘")
 
 
 if __name__ == "__main__":
