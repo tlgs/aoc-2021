@@ -21,49 +21,29 @@ def parse_lines(input_string):
 
 def do_one_fold(dots, folds):
     axis, v = folds[0]
-    paper = set()
     if axis == "y":
-        for x, y in dots:
-            if y < v:
-                paper.add((x, y))
-            else:
-                paper.add((x, v - (y - v)))
+        paper = {(x, y) if y < v else (x, v - (y - v)) for x, y in dots}
     else:
-        for x, y in dots:
-            if x < v:
-                paper.add((x, y))
-            else:
-                paper.add((v - (x - v), y))
+        paper = {(x, y) if x < v else (v - (x - v), y) for x, y in dots}
 
     return len(paper)
 
 
 def complete_folds(dots, folds):
-    curr = dots.copy()
-    y_max, x_max = sys.maxsize, sys.maxsize
+    paper = dots.copy()
     for axis, v in folds:
-        prev = curr
-        curr = set()
         if axis == "y":
-            y_max = v
-            for x, y in prev:
-                if y < v:
-                    curr.add((x, y))
-                else:
-                    curr.add((x, v - (y - v)))
+            paper = {(x, y) if y < v else (x, v - (y - v)) for x, y in paper}
         else:
-            x_max = v
-            for x, y in prev:
-                if x < v:
-                    curr.add((x, y))
-                else:
-                    curr.add((v - (x - v), y))
+            paper = {(x, y) if x < v else (v - (x - v), y) for x, y in paper}
 
+    y_max = max(y for _, y in paper)
+    x_max = max(x for x, _ in paper)
     out = [""]
-    for y in range(y_max):
+    for y in range(y_max + 1):
         row = []
-        for x in range(x_max):
-            row.append("#" if (x, y) in curr else ".")
+        for x in range(x_max + 1):
+            row.append("@" if (x, y) in paper else " ")
         out.append("".join(row))
 
     return "\n".join(out)
