@@ -16,3 +16,4 @@
 | 10  | [Syntax Scoring](10.py)                     | ✓      | ✓      |
 | 11  | [Dumbo Octopus](11.py)                      | ✓      | ✓      |
 | 12  | [Passage Pathing](12.py)                    | ✓      | ✓      |
+| 13  | [Transparent Origami](13.py)                | ✓      | ✓      |
