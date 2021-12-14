@@ -64,7 +64,7 @@ def main():
     args = parser.parse_args()
 
     if not args.raw:
-        print("┌───────┬──────────────┐")
+        print("┌───────┬──────────────────┐")
 
     runtime = 0
     for i in range(1, 26):
@@ -72,20 +72,20 @@ def main():
         try:
             n, total_time = t.autorange()
         except NameError:
-            continue
+            break
 
         mean_time = total_time / n
+        runtime += mean_time
+
         if args.raw:
             print(f"{i} {mean_time * 1000}")
         else:
-            print(f"│ {i:5} │ {_fmt_time(mean_time):>12} │")
-
-        runtime += mean_time
+            print(f"│ {i:5} │ {_fmt_time(mean_time):>9} {'(' + str(n) + ')':>6} │")
 
     if not args.raw:
-        print("├───────┼──────────────┤")
-        print(f"│ total │ {_fmt_time(runtime):>12} │")
-        print("└───────┴──────────────┘")
+        print("├───────┼──────────────────┤")
+        print(f"│ total │ {_fmt_time(runtime):>9}        │")
+        print("└───────┴──────────────────┘")
 
 
 if __name__ == "__main__":
