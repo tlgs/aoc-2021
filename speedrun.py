@@ -18,9 +18,7 @@ def day01(filename="data/01.txt"):
     with open(filename) as f:
         puzzle = [int(x) for x in f]
 
-    # pre-compute first two values
-    part_one = sum(prev < curr for prev, curr in zip(puzzle[:2], puzzle[1:3]))
-
+    part_one = (puzzle[1] > puzzle[0]) + (puzzle[2] > puzzle[1])
     ita, itb = itertools.tee(puzzle[2:])
     next(itb, None)
 
