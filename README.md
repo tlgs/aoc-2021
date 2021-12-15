@@ -18,3 +18,4 @@
 | 12  | [Passage Pathing](12.py)                    | ✓      | ✓      |
 | 13  | [Transparent Origami](13.py)                | ✓      | ✓      |
 | 14  | [Extended Polymerization](14.py)            | ✓      | ✓      |
+| 15  | [Chiton](15.py)                             | ✓      | ✓      |
