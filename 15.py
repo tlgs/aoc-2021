@@ -1,4 +1,13 @@
-"""Day 15: Chiton"""
+"""Day 15: Chiton
+
+Algorithm:
+    A*
+
+Lessons:
+    Remember to use `max_size=None` when using `lru_cache`- by default it will
+    only store the latest 128 calls. Using `lru_cache` without this argument
+    actually resulted in a decrease in performance.
+"""
 import functools
 import sys
 from heapq import heappop, heappush
