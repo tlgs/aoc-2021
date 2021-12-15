@@ -17,3 +17,4 @@
 | 11  | [Dumbo Octopus](11.py)                      | ✓      | ✓      |
 | 12  | [Passage Pathing](12.py)                    | ✓      | ✓      |
 | 13  | [Transparent Origami](13.py)                | ✓      | ✓      |
+| 14  | [Extended Polymerization](14.py)            | ✓      | ✓      |
