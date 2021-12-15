@@ -19,18 +19,40 @@ def neighbors(x, y):
     yield x, y + 1
 
 
-def a_star(grid, full=False):
+def part_one(grid):
+    x_max = max(k[0] for k in grid.keys())
+    y_max = max(k[1] for k in grid.keys())
+    end = x_max, y_max
+
+    total_costs = {(0, 0): 0}
+    frontier = []
+    heappush(frontier, (0, (0, 0)))
+    while frontier:
+        _, curr = heappop(frontier)
+        if curr == end:
+            break
+
+        for neighbor in neighbors(*curr):
+            if neighbor not in grid:
+                continue
+
+            new_cost = total_costs[curr] + grid[neighbor]
+            if neighbor not in total_costs or new_cost < total_costs[neighbor]:
+                total_costs[neighbor] = new_cost
+
+                manhattan = (end[0] - neighbor[0]) + (end[1] - neighbor[1])
+                heappush(frontier, (new_cost + manhattan, neighbor))
+
+    return total_costs[end]
+
+
+def part_two(grid):
     x_max = max(k[0] for k in grid.keys())
     y_max = max(k[1] for k in grid.keys())
 
-    if full:
-        end = ((x_max + 1) * 5) - 1, ((y_max + 1) * 5) - 1
-    else:
-        end = x_max, y_max
+    end = ((x_max + 1) * 5) - 1, ((y_max + 1) * 5) - 1
 
-    backtrack = {(0, 0): None}
     total_costs = {(0, 0): 0}
-
     frontier = []
     heappush(frontier, (0, (0, 0)))
     while frontier:
@@ -49,7 +71,6 @@ def a_star(grid, full=False):
             new_cost = total_costs[x, y] + step_cost
             if (p, q) not in total_costs or new_cost < total_costs[p, q]:
                 total_costs[p, q] = new_cost
-                backtrack[p, q] = x, y
 
                 manhattan = (end[0] - p) + (end[1] - q)
                 heappush(frontier, (new_cost + manhattan, (p, q)))
@@ -72,17 +93,17 @@ class Test:
 """
 
     def test_one(self):
-        assert a_star(parse_input(self.example)) == 40
+        assert part_one(parse_input(self.example)) == 40
 
     def test_two(self):
-        assert a_star(parse_input(self.example), True) == 315
+        assert part_two(parse_input(self.example)) == 315
 
 
 def main():
     puzzle = parse_input(sys.stdin.read())
 
-    print("part 1:", a_star(puzzle))
-    print("part 2:", a_star(puzzle, True))
+    print("part 1:", part_one(puzzle))
+    print("part 2:", part_two(puzzle))
 
 
 if __name__ == "__main__":
