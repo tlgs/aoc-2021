@@ -87,6 +87,8 @@ def main():
         print(f"│ total │ {_fmt_time(runtime):>9}        │")
         print("└───────┴──────────────────┘")
 
+    return 0
+
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
