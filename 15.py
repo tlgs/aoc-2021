@@ -1,10 +1,10 @@
 """Day 15: Chiton
 
 Algorithm:
-    A*
+    Dijkstra
 
 Lessons:
-    Remember to use `max_size=None` when using `lru_cache`- by default it will
+    Remember to use `maxsize=None` when using `lru_cache`- by default it will
     only store the latest 128 calls. Using `lru_cache` without this argument
     actually resulted in a decrease in performance.
 """
@@ -35,7 +35,7 @@ def part_one(grid, end):
     frontier = []
     heappush(frontier, (0, (0, 0)))
     while frontier:
-        _, curr = heappop(frontier)
+        curr_cost, curr = heappop(frontier)
         if curr == end:
             break
 
@@ -43,12 +43,10 @@ def part_one(grid, end):
             if neighbor not in grid:
                 continue
 
-            new_cost = total_costs[curr] + grid[neighbor]
+            new_cost = curr_cost + grid[neighbor]
             if neighbor not in total_costs or new_cost < total_costs[neighbor]:
                 total_costs[neighbor] = new_cost
-
-                manhattan = (end[0] - neighbor[0]) + (end[1] - neighbor[1])
-                heappush(frontier, (new_cost + manhattan, neighbor))
+                heappush(frontier, (new_cost, neighbor))
 
     return total_costs[end]
 
@@ -58,30 +56,26 @@ def part_two(grid, end):
 
     @functools.lru_cache(maxsize=None)
     def full_grid(x, y):
-        xd, xm = divmod(x, side)
-        yd, ym = divmod(y, side)
-        return sum(divmod(grid[xm, ym] + xd + yd, 10))
+        v = grid[x % side, y % side] + x // side + y // side
+        return v if v < 10 else v - 9
 
     end = side * 5 - 1, side * 5 - 1
     total_costs = {(0, 0): 0}
-
     frontier = []
     heappush(frontier, (0, (0, 0)))
     while frontier:
-        _, curr = heappop(frontier)
+        curr_cost, curr = heappop(frontier)
         if curr == end:
             break
 
         for neighbor in neighbors(*curr):
-            if not (0 <= neighbor[0] <= end[0] and 0 <= neighbor[1] <= end[1]):
+            if not (-1 < neighbor[0] < side * 5) or not (-1 < neighbor[1] < side * 5):
                 continue
 
-            new_cost = total_costs[curr] + full_grid(*neighbor)
+            new_cost = curr_cost + full_grid(*neighbor)
             if neighbor not in total_costs or new_cost < total_costs[neighbor]:
                 total_costs[neighbor] = new_cost
-
-                manhattan = (end[0] - neighbor[0]) + (end[1] - neighbor[1])
-                heappush(frontier, (new_cost + manhattan, neighbor))
+                heappush(frontier, (new_cost, neighbor))
 
     return total_costs[end]
 
