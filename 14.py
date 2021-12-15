@@ -1,6 +1,5 @@
 """Day 14: Extended Polymerization"""
 import collections
-import itertools
 import sys
 
 
@@ -17,24 +16,20 @@ def parse_input(puzzle_input):
 
 def process_polymer(template, rules, steps):
     pairs = collections.Counter()
-    ita, itb = itertools.tee(template)
-    start = next(itb)
-    for a, b in zip(ita, itb):
-        pairs[a + b] += 1
+    for i in range(0, len(template) - 1):
+        p = template[i : i + 2]
+        pairs[p] += 1
 
     for _ in range(steps):
         nxt = collections.Counter()
         for k, v in pairs.items():
-            for new_pairs in rules[k]:
-                nxt[new_pairs] += v
-
+            nxt[rules[k][0]] += v
+            nxt[rules[k][1]] += v
         pairs = nxt
 
-    counts = collections.Counter()
+    counts = collections.Counter(template[-1])
     for k, v in pairs.items():
-        counts[k[1]] += v
-
-    counts[start] += 1
+        counts[k[0]] += v
 
     first, *_, last = counts.most_common()
     return first[1] - last[1]
