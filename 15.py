@@ -1,25 +1,23 @@
 """Day 15: Chiton
 
 Algorithm:
-    Dijkstra / using Dial's algorithm. Still not the performance I'm looking for.
+    Dijkstra / DP
 
 Lessons:
     Remember to use `maxsize=None` when using `lru_cache`- by default it will
     only store the latest 128 calls. Using `lru_cache` without this argument
     actually resulted in a decrease in performance.
 """
-import functools
 import sys
 from heapq import heappop, heappush
 
 
 def parse_input(puzzle_input):
-    grid = {}
-    for y, row in enumerate(puzzle_input.splitlines()):
-        for x, v in enumerate(row):
-            grid[x, y] = int(v)
+    grid = []
+    for row in puzzle_input.splitlines():
+        grid.append([int(x) for x in row])
 
-    return grid, (x, y)
+    return grid
 
 
 def neighbors(x, y):
@@ -29,67 +27,62 @@ def neighbors(x, y):
     yield x, y + 1
 
 
-def part_one(grid, end):
+def part_one(grid):
+    end = len(grid) - 1
     total_costs = {(0, 0): 0}
 
     frontier = []
     heappush(frontier, (0, (0, 0)))
     while frontier:
         curr_cost, curr = heappop(frontier)
-        if curr == end:
+        if curr == (end, end):
             break
 
-        for neighbor in neighbors(*curr):
-            if neighbor not in grid:
+        for x, y in neighbors(*curr):
+            if x < 0 or x > end or y < 0 or y > end:
                 continue
 
-            new_cost = curr_cost + grid[neighbor]
-            if neighbor not in total_costs or new_cost < total_costs[neighbor]:
-                total_costs[neighbor] = new_cost
-                heappush(frontier, (new_cost, neighbor))
+            new_cost = curr_cost + grid[y][x]
+            if (x, y) not in total_costs or new_cost < total_costs[x, y]:
+                total_costs[x, y] = new_cost
+                heappush(frontier, (new_cost, (x, y)))
 
-    return total_costs[end]
+    return total_costs[end, end]
 
 
-def part_two(grid, end):
-    side = end[0] + 1
+def part_two(grid):
+    side = len(grid)
+    end = side * 5 - 1
 
-    @functools.lru_cache(maxsize=None)
-    def full_grid(x, y):
-        v = grid[x % side, y % side] + x // side + y // side
-        return v if v < 10 else v - 9
+    dist = [[0] * side * 5 for _ in range(side * 5)]
+    queue = [[(0, 0)]] + [[] for _ in range(side * 10 * 9)]
+    v = 0
+    while dist[end][end] == 0:
+        for y, x in queue[v]:
+            if v > dist[y][x]:
+                continue
 
-    end = side * 5 - 1, side * 5 - 1
-
-    total_costs = {(0, 0): 0}
-    frontier = [[] for _ in range(10)]
-    frontier[0].append((0, 0))
-    idx = 0
-    while True:
-        i = 1
-        while not frontier[(idx + i) % 10]:
-            i += 1
-
-        idx = (idx + i) % 10
-        for curr in frontier[idx]:
-            if curr == end:
-                return total_costs[end]
-
-            for neighbor in neighbors(*curr):
-                if not (-1 < neighbor[0] < side * 5) or not (
-                    -1 < neighbor[1] < side * 5
-                ):
+            for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                if x + dx < 0 or x + dx > end or y + dy < 0 or y + dy > end:
                     continue
 
-                v = full_grid(*neighbor)
-                new_cost = total_costs[curr] + v
-                if neighbor not in total_costs or new_cost < total_costs[neighbor]:
-                    total_costs[neighbor] = new_cost
-                    frontier[(idx + v) % 10].append(neighbor)
+                dt = (
+                    (
+                        grid[(y + dy) % side][(x + dx) % side]
+                        + (x + dx) // side
+                        + (y + dy) // side
+                        - 1
+                    )
+                    % 9
+                ) + 1
 
-        frontier[idx].clear()
+                if dist[y + dy][x + dx] == 0:
+                    dist[y + dy][x + dx] = v + dt
+                    queue[v + dt].append((y + dy, x + dx))
 
-    raise RuntimeError("unreachable")
+        v += 1
+
+    return dist[end][end]
 
 
 class Test:
@@ -107,17 +100,17 @@ class Test:
 """
 
     def test_one(self):
-        assert part_one(*parse_input(self.example)) == 40
+        assert part_one(parse_input(self.example)) == 40
 
     def test_two(self):
-        assert part_two(*parse_input(self.example)) == 315
+        assert part_two(parse_input(self.example)) == 315
 
 
 def main():
     puzzle = parse_input(sys.stdin.read())
 
-    print("part 1:", part_one(*puzzle))
-    print("part 2:", part_two(*puzzle))
+    print("part 1:", part_one(puzzle))
+    print("part 2:", part_two(puzzle))
 
 
 if __name__ == "__main__":
