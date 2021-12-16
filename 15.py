@@ -1,12 +1,16 @@
 """Day 15: Chiton
 
 Algorithm:
-    Dijkstra / DP
+    Dijkstra
 
 Lessons:
     Remember to use `maxsize=None` when using `lru_cache`- by default it will
     only store the latest 128 calls. Using `lru_cache` without this argument
     actually resulted in a decrease in performance.
+
+    More importantly, don't scorn on raw lists / lists of lists as they might
+    outperform queues / dicts when _memory doesn't matter_ and you can solve the problem
+    with appends and lookups (both O(1)).
 """
 import sys
 from heapq import heappop, heappush
@@ -43,7 +47,7 @@ def part_one(grid):
                 continue
 
             new_cost = curr_cost + grid[y][x]
-            if (x, y) not in total_costs or new_cost < total_costs[x, y]:
+            if (x, y) not in total_costs:
                 total_costs[x, y] = new_cost
                 heappush(frontier, (new_cost, (x, y)))
 
@@ -55,13 +59,10 @@ def part_two(grid):
     end = side * 5 - 1
 
     dist = [[0] * side * 5 for _ in range(side * 5)]
-    queue = [[(0, 0)]] + [[] for _ in range(side * 10 * 9)]
+    queue = [[(0, 0)]] + [[] for _ in range(side * 90)]
     v = 0
     while dist[end][end] == 0:
         for y, x in queue[v]:
-            if v > dist[y][x]:
-                continue
-
             for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
                 if x + dx < 0 or x + dx > end or y + dy < 0 or y + dy > end:
                     continue
