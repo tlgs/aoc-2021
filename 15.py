@@ -1,7 +1,7 @@
 """Day 15: Chiton
 
 Algorithm:
-    Dijkstra
+    Dijkstra / using Dial's algorithm. Still not the performance I'm looking for.
 
 Lessons:
     Remember to use `maxsize=None` when using `lru_cache`- by default it will
@@ -60,24 +60,36 @@ def part_two(grid, end):
         return v if v < 10 else v - 9
 
     end = side * 5 - 1, side * 5 - 1
+
     total_costs = {(0, 0): 0}
-    frontier = []
-    heappush(frontier, (0, (0, 0)))
-    while frontier:
-        curr_cost, curr = heappop(frontier)
-        if curr == end:
-            break
+    frontier = [[] for _ in range(10)]
+    frontier[0].append((0, 0))
+    idx = 0
+    while True:
+        i = 1
+        while not frontier[(idx + i) % 10]:
+            i += 1
 
-        for neighbor in neighbors(*curr):
-            if not (-1 < neighbor[0] < side * 5) or not (-1 < neighbor[1] < side * 5):
-                continue
+        idx = (idx + i) % 10
+        for curr in frontier[idx]:
+            if curr == end:
+                return total_costs[end]
 
-            new_cost = curr_cost + full_grid(*neighbor)
-            if neighbor not in total_costs or new_cost < total_costs[neighbor]:
-                total_costs[neighbor] = new_cost
-                heappush(frontier, (new_cost, neighbor))
+            for neighbor in neighbors(*curr):
+                if not (-1 < neighbor[0] < side * 5) or not (
+                    -1 < neighbor[1] < side * 5
+                ):
+                    continue
 
-    return total_costs[end]
+                v = full_grid(*neighbor)
+                new_cost = total_costs[curr] + v
+                if neighbor not in total_costs or new_cost < total_costs[neighbor]:
+                    total_costs[neighbor] = new_cost
+                    frontier[(idx + v) % 10].append(neighbor)
+
+        frontier[idx].clear()
+
+    raise RuntimeError("unreachable")
 
 
 class Test:
