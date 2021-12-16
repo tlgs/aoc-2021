@@ -1,7 +1,7 @@
 """Day 15: Chiton
 
 Algorithm:
-    Dijkstra
+    Dijkstra, with no need to revisit previously seen nodes
 
 Lessons:
     Remember to use `maxsize=None` when using `lru_cache`- by default it will
@@ -13,7 +13,6 @@ Lessons:
     with appends and lookups (both O(1)).
 """
 import sys
-from heapq import heappop, heappush
 
 
 def parse_input(puzzle_input):
@@ -32,26 +31,26 @@ def neighbors(x, y):
 
 
 def part_one(grid):
-    end = len(grid) - 1
-    total_costs = {(0, 0): 0}
+    side = len(grid)
+    end = side - 1
 
-    frontier = []
-    heappush(frontier, (0, (0, 0)))
-    while frontier:
-        curr_cost, curr = heappop(frontier)
-        if curr == (end, end):
-            break
+    dist = [[0] * side for _ in range(side)]
+    queue = [[(0, 0)]] + [[] for _ in range(side * 18)]
+    v = 0
+    while not dist[end][end]:
+        for x, y in queue[v]:
+            for p, q in neighbors(x, y):
+                if p < 0 or p > end or q < 0 or q > end:
+                    continue
 
-        for x, y in neighbors(*curr):
-            if x < 0 or x > end or y < 0 or y > end:
-                continue
+                if not dist[q][p]:
+                    w = grid[q][p]
+                    dist[q][p] = v + w
+                    queue[v + w].append((p, q))
 
-            new_cost = curr_cost + grid[y][x]
-            if (x, y) not in total_costs:
-                total_costs[x, y] = new_cost
-                heappush(frontier, (new_cost, (x, y)))
+        v += 1
 
-    return total_costs[end, end]
+    return dist[end][end]
 
 
 def part_two(grid):
@@ -61,25 +60,16 @@ def part_two(grid):
     dist = [[0] * side * 5 for _ in range(side * 5)]
     queue = [[(0, 0)]] + [[] for _ in range(side * 90)]
     v = 0
-    while dist[end][end] == 0:
-        for y, x in queue[v]:
-            for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-                if x + dx < 0 or x + dx > end or y + dy < 0 or y + dy > end:
+    while not dist[end][end]:
+        for x, y in queue[v]:
+            for p, q in neighbors(x, y):
+                if p < 0 or p > end or q < 0 or q > end:
                     continue
 
-                if dist[y + dy][x + dx] == 0:
-                    dt = (
-                        (
-                            grid[(y + dy) % side][(x + dx) % side]
-                            + (x + dx) // side
-                            + (y + dy) // side
-                            - 1
-                        )
-                        % 9
-                    ) + 1
-
-                    dist[y + dy][x + dx] = v + dt
-                    queue[v + dt].append((y + dy, x + dx))
+                if not dist[q][p]:
+                    w = ((grid[q % side][p % side] + p // side + q // side - 1) % 9) + 1
+                    dist[q][p] = v + w
+                    queue[v + w].append((p, q))
 
         v += 1
 
