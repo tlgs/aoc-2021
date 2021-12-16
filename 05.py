@@ -53,20 +53,6 @@ def overlap_two(segments):
     return sum(v >= 2 for v in counts.values())
 
 
-def counts_pgm(counts, filename="counts.pgm"):
-    """write a PGM file depicting overlapping segment counts at each (x, y)"""
-    a, b, c = 0, 0, 0
-    for (x, y), v in counts.items():
-        a = max(a, x)
-        b = max(b, y)
-        c = max(c, v)
-
-    with open(filename, "w") as f:
-        f.write(f"P2\n{a} {b}\n{c}\n")
-        for y in range(b):
-            f.write(" ".join(str(counts[(x, y)]) for x in range(a)) + "\n")
-
-
 class Test:
     example = [
         ((0, 9), (5, 9)),
