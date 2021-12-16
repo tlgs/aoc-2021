@@ -66,17 +66,17 @@ def part_two(grid):
                 if x + dx < 0 or x + dx > end or y + dy < 0 or y + dy > end:
                     continue
 
-                dt = (
-                    (
-                        grid[(y + dy) % side][(x + dx) % side]
-                        + (x + dx) // side
-                        + (y + dy) // side
-                        - 1
-                    )
-                    % 9
-                ) + 1
-
                 if dist[y + dy][x + dx] == 0:
+                    dt = (
+                        (
+                            grid[(y + dy) % side][(x + dx) % side]
+                            + (x + dx) // side
+                            + (y + dy) // side
+                            - 1
+                        )
+                        % 9
+                    ) + 1
+
                     dist[y + dy][x + dx] = v + dt
                     queue[v + dt].append((y + dy, x + dx))
 
