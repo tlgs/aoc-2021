@@ -99,6 +99,53 @@ def day03(filename="data/03.txt"):
     assert int(o2, 2) * int(co2, 2) == 903810
 
 
+def day04(filename="data/04.txt"):
+    with open(filename) as f:
+        raw_numbers, *raw_boards = f.read().split("\n\n")
+
+    numbers = [int(x) for x in raw_numbers.split(",")]
+    flat_boards = [[int(x) for x in board.split()] for board in raw_boards]
+
+    class Board:
+        def __init__(self, flat_board):
+            self.positions = dict((v, i) for i, v in enumerate(flat_board))
+            self.marked = set()
+
+        def check_win(self, idx, n):
+            row, col = divmod(idx, 5)
+            hz = set(range(row * 5, row * 5 + 5)) <= self.marked
+            vt = set(range(col, 25, 5)) <= self.marked
+
+            return sum(self.positions.keys()) * n if hz or vt else None
+
+        def update(self, n):
+            if n not in self.positions:
+                return None
+
+            idx = self.positions.pop(n)
+            self.marked.add(idx)
+
+            return self.check_win(idx, n)
+
+    boards = [Board(fb) for fb in flat_boards]
+    playing = set(i for i, _ in enumerate(boards))
+    scores = []
+    while len(scores) != len(boards):
+        for n in numbers:
+            for i, board in enumerate(boards):
+                if i not in playing:
+                    continue
+
+                if (s := board.update(n)) is not None:
+                    playing.remove(i)
+                    scores.append(s)
+
+    part_one, *_, part_two = scores
+
+    assert part_one == 38594
+    assert part_two == 21184
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--raw", action="store_true")
