@@ -28,24 +28,24 @@ def power_consumption(report):
 
 
 def life_support_rating(report):
-    counts = {}
+    trie = {}
     for line in report:
         for v in itertools.accumulate(line):
-            counts[v] = counts.get(v, 0) + 1
+            trie[v] = trie.get(v, 0) + 1
 
-    oxygen, co2 = "", ""
+    o2, co2 = "", ""
     for _ in report[0]:
-        if counts.get(oxygen + "1", 0) >= counts.get(oxygen + "0", 0):
-            oxygen += "1"
+        if trie.get(o2 + "1", 0) >= trie.get(o2 + "0", 0):
+            o2 += "1"
         else:
-            oxygen += "0"
+            o2 += "0"
 
-        if counts.get(co2 + "1", sys.maxsize) < counts.get(co2 + "0", sys.maxsize):
+        if trie.get(co2 + "1", sys.maxsize) < trie.get(co2 + "0", sys.maxsize):
             co2 += "1"
         else:
             co2 += "0"
 
-    return int(oxygen, 2) * int(co2, 2)
+    return int(o2, 2) * int(co2, 2)
 
 
 class Test:

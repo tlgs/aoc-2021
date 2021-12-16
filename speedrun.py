@@ -1,6 +1,7 @@
 import argparse
 import collections
 import itertools
+import sys
 import timeit
 
 
@@ -56,6 +57,46 @@ def day02(filename="data/02.txt"):
 
     assert pos_one * depth_one == 1868935
     assert pos_two * depth_two == 1965970888
+
+
+def day03(filename="data/03.txt"):
+    with open(filename) as f:
+        puzzle = [line.strip() for line in f]
+
+    bit_counts = [0] * len(puzzle[0])
+    for line in puzzle:
+        for i, v in enumerate(line):
+            if v == "1":
+                bit_counts[i] += 1
+
+    gamma, epsilon = 0, 0
+    for ones in bit_counts:
+        gamma <<= 1
+        epsilon <<= 1
+        if ones > len(puzzle) // 2:
+            gamma += 1
+        else:
+            epsilon += 1
+
+    trie = {}
+    for line in puzzle:
+        for v in itertools.accumulate(line):
+            trie[v] = trie.get(v, 0) + 1
+
+    o2, co2 = "", ""
+    for _ in puzzle[0]:
+        if trie.get(o2 + "1", 0) >= trie.get(o2 + "0", 0):
+            o2 += "1"
+        else:
+            o2 += "0"
+
+        if trie.get(co2 + "1", sys.maxsize) < trie.get(co2 + "0", sys.maxsize):
+            co2 += "1"
+        else:
+            co2 += "0"
+
+    assert gamma * epsilon == 741950
+    assert int(o2, 2) * int(co2, 2) == 903810
 
 
 def main():
