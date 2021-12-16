@@ -2,7 +2,8 @@
 
 Lessons:
     No clean direct way to get a "frozen dictionary";
-    If you only care about __getitem__ using a namedtuple might suffice
+    If you only care about __getitem__ using a namedtuple might suffice.
+    Might come back to refactor later with custom class (?)
 
 Notes:
     `import pytest` adds ~100ms to runtime

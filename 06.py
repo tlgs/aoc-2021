@@ -1,8 +1,4 @@
-"""Day 6: Lanternfish
-
-Lessons:
-    `Counter.total()` becomes available in Python 3.10.
-"""
+"""Day 6: Lanternfish"""
 import collections
 import sys
 
@@ -17,7 +13,7 @@ def simulate(ages, days):
         school[8] = resets
         school[6] += resets
 
-    return sum(school.values())
+    return school.total()
 
 
 class Test:

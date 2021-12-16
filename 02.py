@@ -1,5 +1,4 @@
-"""Day 2: Dive!
-"""
+"""Day 2: Dive!"""
 import operator
 import sys
 
