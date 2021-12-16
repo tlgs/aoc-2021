@@ -146,6 +146,35 @@ def day04(filename="data/04.txt"):
     assert part_two == 21184
 
 
+def day05(filename="data/05.txt"):
+    segments = []
+    with open(filename) as f:
+        for line in f:
+            raw_fst, raw_snd = line.split(" -> ")
+            fst = tuple(int(x) for x in raw_fst.split(","))
+            snd = tuple(int(x) for x in raw_snd.split(","))
+            segments.append((fst, snd))
+
+    counts1 = collections.defaultdict(int)
+    counts2 = collections.defaultdict(int)
+    for start, end in segments:
+        x1, y1, x2, y2 = *start, *end
+        dx = ((x2 - x1) > 0) - ((x2 - x1) < 0)
+        dy = ((y2 - y1) > 0) - ((y2 - y1) < 0)
+
+        for i, j in zip(
+            range(x1, x2 + dx, dx) if dx else itertools.repeat(x1),
+            range(y1, y2 + dy, dy) if dy else itertools.repeat(y1),
+        ):
+            counts2[(i, j)] += 1
+
+            if (not dx) or (not dy):
+                counts1[(i, j)] += 1
+
+    assert sum(v > 1 for v in counts1.values()) == 7468
+    assert sum(v > 1 for v in counts2.values()) == 22364
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--raw", action="store_true")
