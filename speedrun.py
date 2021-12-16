@@ -151,10 +151,7 @@ def main():
     parser.add_argument("--raw", action="store_true")
     args = parser.parse_args()
 
-    if not args.raw:
-        print("┌───────┬──────────────────┐")
-
-    runtime = 0
+    runs = []
     for i in range(1, 26):
         t = timeit.Timer(f"day{i:02}()", globals=globals())
         try:
@@ -163,17 +160,23 @@ def main():
             break
 
         mean_time = total_time / n
-        runtime += mean_time
-
-        if args.raw:
-            print(f"{i} {mean_time * 1000}")
-        else:
-            print(f"│ {i:5} │ {_fmt_time(mean_time):>9} {'(' + str(n) + ')':>6} │")
+        runs.append((mean_time, n))
 
     if not args.raw:
-        print("├───────┼──────────────────┤")
-        print(f"│ total │ {_fmt_time(runtime):>9}        │")
-        print("└───────┴──────────────────┘")
+        print("┌───────┬───────────┬──────┐")
+        print("│   day │ mean time │ runs │")
+        print("├───────┼───────────┼──────┤")
+
+        for i, (mt, n) in enumerate(runs, start=1):
+            print(f"│ {i:5} │ {_fmt_time(mt):>9} │ {n:>4} │")
+
+        print("├───────┼───────────┼──────┘")
+        print(f"│ total │ {_fmt_time(sum(t for t, _ in runs)):>9} │")
+        print("└───────┴───────────┘")
+
+    else:
+        for i, (mt, _) in enumerate(runs, start=1):
+            print(f"{i} {mt * 1000}")
 
     return 0
 
