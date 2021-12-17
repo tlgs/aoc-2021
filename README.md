@@ -19,3 +19,4 @@
 | 13  | [Transparent Origami](13.py)                | ✓      | ✓      |
 | 14  | [Extended Polymerization](14.py)            | ✓      | ✓      |
 | 15  | [Chiton](15.py)                             | ✓      | ✓      |
+| 16  | [Packet Decoder](16.py)                     | ✓      | ✓      |
