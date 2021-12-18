@@ -175,6 +175,29 @@ def day05(filename="data/05.txt"):
     assert sum(v > 1 for v in counts2.values()) == 22364
 
 
+def day06(filename="data/06.txt"):
+    with open(filename) as f:
+        ages = [int(x) for x in f.read().split(",")]
+
+    parts = []
+    school = collections.Counter(ages)
+    for runs in (80, 176):
+        for _ in range(runs):
+            resets = school.get(0, 0)
+            for i in range(8):
+                school[i] = school.get(i + 1, 0)
+
+            school[8] = resets
+            school[6] += resets
+
+        parts.append(school.total())
+
+    part_one, part_two = parts
+
+    assert part_one == 360268
+    assert part_two == 1632146183902
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--raw", action="store_true")
