@@ -1,7 +1,10 @@
 """Day 17: Trick Shot
 
 Algorithm:
-    Ugly brute-force.
+    For y > 0 and vy > 0, the probe comes down at the velocity as it is shot up,
+    so will inevitably be at some (x, 0). At the step immediately after y=0,
+    the velocity will be -(vy + 1). Under these conditions, and for the probe
+    to be in target, vy is maximized when -(vy + 1) = y_min.
 """
 import sys
 
@@ -14,43 +17,13 @@ def parse_input(puzzle_input):
     return (x_min, x_max, y_min, y_max)
 
 
-def f(v, s):
-    if s == 0:
-        return v
-    return f(v, s - 1) + (v - s)
-
-
 def part_one(target_area):
-    x_min, x_max, y_min, y_max = target_area
+    _, _, y_min, _ = target_area
 
-    vx_min = 1
-    while (vx_min * (vx_min + 1) / 2) < x_min:
-        vx_min += 1
-    vx_min -= 1
-
-    # brute-force baby
-    ans = 0
-    for vx_initial in range(vx_min, x_max + 1):
-        for vy_initial in range(y_min, 400):
-            x, y = 0, 0
-            vx, vy = vx_initial, vy_initial
-            candidate = 0
-            while x <= x_max and y >= y_min:
-                if x >= x_min and y <= y_max:
-                    ans = max(ans, candidate)
-                    break
-                x += vx
-                y += vy
-
-                if vx > 0:
-                    vx -= 1
-                elif vx < 0:
-                    vx += 1
-
-                vy -= 1
-                candidate = max(candidate, y)
-
-    return ans
+    vy = -y_min - 1
+    y = vy * (vy + 1) // 2
+    return y
+    # return (y_min *-~ y_min) >> 1
 
 
 def part_two(target_area):
@@ -64,18 +37,18 @@ def part_two(target_area):
     # brute-force baby
     count = 0
     for vx_initial in range(vx_min, x_max + 1):
-        for vy_initial in range(y_min, 500):
+        for vy_initial in range(y_min, -y_min):
             x, y = 0, 0
             vx, vy = vx_initial, vy_initial
             while x <= x_max and y >= y_min:
                 if x >= x_min and y <= y_max:
                     count += 1
                     break
+
                 x += vx
                 y += vy
 
                 vy -= 1
-
                 if vx > 0:
                     vx -= 1
                 elif vx < 0:
@@ -93,8 +66,7 @@ target area: x=20..30, y=-10..-5
         assert part_one(parse_input(self.example)) == 45
 
     def test_two(self):
-        assert True
-        # assert part_two(self.example) == expected
+        assert part_two(parse_input(self.example)) == 112
 
 
 def main():
