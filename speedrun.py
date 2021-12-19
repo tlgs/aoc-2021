@@ -20,12 +20,9 @@ def day01(filename="data/01.txt"):
         puzzle = [int(x) for x in f]
 
     part_one = (puzzle[1] > puzzle[0]) + (puzzle[2] > puzzle[1])
-    ita, itb = itertools.tee(puzzle[2:])
-    next(itb, None)
-
     part_two = 0
     window = collections.deque(puzzle[:3])
-    for prev, curr in zip(ita, itb):
+    for prev, curr in itertools.pairwise(puzzle[2:]):
         part_one += prev < curr
 
         window.append(curr)
@@ -55,8 +52,11 @@ def day02(filename="data/02.txt"):
             depth_one -= value
             aim -= value
 
-    assert pos_one * depth_one == 1868935
-    assert pos_two * depth_two == 1965970888
+    part_one = pos_one * depth_one
+    part_two = pos_two * depth_two
+
+    assert part_one == 1868935
+    assert part_two == 1965970888
 
 
 def day03(filename="data/03.txt"):
@@ -95,8 +95,11 @@ def day03(filename="data/03.txt"):
         else:
             co2 += "0"
 
-    assert gamma * epsilon == 741950
-    assert int(o2, 2) * int(co2, 2) == 903810
+    part_one = gamma * epsilon
+    part_two = int(o2, 2) * int(co2, 2)
+
+    assert part_one == 741950
+    assert part_two == 903810
 
 
 def day04(filename="data/04.txt"):
@@ -168,11 +171,14 @@ def day05(filename="data/05.txt"):
         ):
             counts2[(i, j)] += 1
 
-            if (not dx) or (not dy):
+            if not dx or not dy:
                 counts1[(i, j)] += 1
 
-    assert sum(v > 1 for v in counts1.values()) == 7468
-    assert sum(v > 1 for v in counts2.values()) == 22364
+    part_one = sum(v > 1 for v in counts1.values())
+    part_two = sum(v > 1 for v in counts2.values())
+
+    assert part_one == 7468
+    assert part_two == 22364
 
 
 def day06(filename="data/06.txt"):
