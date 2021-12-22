@@ -21,3 +21,6 @@
 | 15  | [Chiton](15.py)                             | ✓      | ✓      |
 | 16  | [Packet Decoder](16.py)                     | ✓      | ✓      |
 | 17  | [Trick Shot](17.py)                         | ✓      | ✓      |
+| 18  |  -                                          |        |        |
+| 19  |  -                                          |        |        |
+| 20  | [Trench Map](20.py)                         | ✓      | ✓      |
