@@ -1,6 +1,5 @@
 """Day 21: Dirac Dice"""
 import functools
-import itertools
 import sys
 
 
@@ -13,40 +12,32 @@ def parse_input(puzzle_input):
 
 
 def part_one(a, b):
-    positions = [a, b]
-    scores = [0, 0]
-    die_count = 0
-    deterministic_die = itertools.cycle(range(1, 101))
-    while not any(v >= 1000 for v in scores):
-        for i in range(2):
-            roll = sum(next(deterministic_die) for _ in range(3))
-            positions[i] = (positions[i] + roll - 1) % 10 + 1
-            scores[i] += positions[i]
-            die_count += 1
-            if scores[i] >= 1000:
-                break
+    def deterministic(pa, pb, sa=0, sb=0, i=0):
+        if sb >= 1000:
+            return i * sa
 
-    return 3 * die_count * min(scores)
+        new_pa = (pa + 3 * i + 6) % 10 or 10
+        return deterministic(pb, new_pa, sb, sa + new_pa, i + 3)
 
-
-@functools.cache
-def play(pa, pb, sa, sb):
-    if sb >= 21:
-        return 0, 1
-
-    wins_a, wins_b = 0, 0
-    for roll, n in [(3, 1), (4, 3), (5, 6), (6, 7), (7, 6), (8, 3), (9, 1)]:
-        new_pa = (pa + roll) % 10 or 10
-        wb, wa = play(pb, new_pa, sb, sa + new_pa)
-
-        wins_a += wa * n
-        wins_b += wb * n
-
-    return wins_a, wins_b
+    return deterministic(a, b)
 
 
 def part_two(a, b):
-    return max(play(a, b, 0, 0))
+    @functools.cache
+    def dirac(pa, pb, sa=0, sb=0):
+        if sb >= 21:
+            return 0, 1
+
+        wins_a, wins_b = 0, 0
+        for roll, n in [(3, 1), (4, 3), (5, 6), (6, 7), (7, 6), (8, 3), (9, 1)]:
+            new_pa = (pa + roll) % 10 or 10
+            wb, wa = dirac(pb, new_pa, sb, sa + new_pa)
+            wins_a += wa * n
+            wins_b += wb * n
+
+        return wins_a, wins_b
+
+    return max(dirac(a, b))
 
 
 class Test:
