@@ -1,4 +1,11 @@
-"""Day 21: Dirac Dice"""
+"""Day 21: Dirac Dice
+
+Lessons:
+    When dealing with symetric games, the recursive approach with
+    "parameter switching" is an elegant solution.
+
+    `functools.cache` exists as a substitute for `functools.lru_cache(maxsize=None)`.
+"""
 import functools
 import sys
 
