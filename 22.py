@@ -25,9 +25,10 @@ class Cuboid(NamedTuple):
             return Cuboid(xa, xb, ya, yb, za, zb)
 
     def volume(self):
-        return (
-            (self.xb - self.xa + 1) * (self.yb - self.ya + 1) * (self.zb - self.za + 1)
-        )
+        i = self.xb - self.xa + 1
+        j = self.yb - self.ya + 1
+        k = self.zb - self.za + 1
+        return i * j * k
 
 
 class Step(NamedTuple):
@@ -48,12 +49,11 @@ def parse_input(puzzle_input):
 def part_one(steps):
     cubes = set()
     for step in steps:
-        x0 = max(step.cuboid.xa, -50)
-        x1 = min(step.cuboid.xb, 50)
-        y0 = max(step.cuboid.ya, -50)
-        y1 = min(step.cuboid.yb, 50)
-        z0 = max(step.cuboid.za, -50)
-        z1 = min(step.cuboid.zb, 50)
+        x0, x1, y0, y1, z0, z1 = step.cuboid
+
+        if x0 < -50 or x1 > 50 or y0 < -50 or y1 > 50 or z0 < -50 or z1 > 50:
+            continue
+
         for x in range(x0, x1 + 1):
             for y in range(y0, y1 + 1):
                 for z in range(z0, z1 + 1):
