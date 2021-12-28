@@ -6,30 +6,28 @@ from typing import NamedTuple
 
 
 class Cuboid(NamedTuple):
-    x_range: tuple[int, int]
-    y_range: tuple[int, int]
-    z_range: tuple[int, int]
+    xa: int
+    xb: int
+    ya: int
+    yb: int
+    za: int
+    zb: int
 
     def intersect(self, other):
-        a0, a1, u0, u1 = *self.x_range, *other.x_range
-        b0, b1, v0, v1 = *self.y_range, *other.y_range
-        c0, c1, w0, w1 = *self.z_range, *other.z_range
+        xa = self.xa if self.xa > other.xa else other.xa
+        ya = self.ya if self.ya > other.ya else other.ya
+        za = self.za if self.za > other.za else other.za
+        xb = self.xb if self.xb < other.xb else other.xb
+        yb = self.yb if self.yb < other.yb else other.yb
+        zb = self.zb if self.zb < other.zb else other.zb
 
-        x0 = max(a0, u0)
-        x1 = min(a1, u1)
-        y0 = max(b0, v0)
-        y1 = min(b1, v1)
-        z0 = max(c0, w0)
-        z1 = min(c1, w1)
-
-        if x0 <= x1 and y0 <= y1 and z0 <= z1:
-            return Cuboid((x0, x1), (y0, y1), (z0, z1))
+        if xa <= xb and ya <= yb and za <= zb:
+            return Cuboid(xa, xb, ya, yb, za, zb)
 
     def volume(self):
-        a = self.x_range[1] - self.x_range[0] + 1
-        b = self.y_range[1] - self.y_range[0] + 1
-        c = self.z_range[1] - self.z_range[0] + 1
-        return a * b * c
+        return (
+            (self.xb - self.xa + 1) * (self.yb - self.ya + 1) * (self.zb - self.za + 1)
+        )
 
 
 class Step(NamedTuple):
@@ -41,8 +39,7 @@ def parse_input(puzzle_input):
     steps = []
     for line in puzzle_input.splitlines():
         command, coord_list = line.split()
-        x0, x1, y0, y1, z0, z1 = map(int, re.findall(r"-?\d+", coord_list))
-        cuboid = Cuboid((x0, x1), (y0, y1), (z0, z1))
+        cuboid = Cuboid(*map(int, re.findall(r"-?\d+", coord_list)))
         steps.append(Step(command == "on", cuboid))
 
     return steps
@@ -51,12 +48,12 @@ def parse_input(puzzle_input):
 def part_one(steps):
     cubes = set()
     for step in steps:
-        x0 = max(step.cuboid.x_range[0], -50)
-        x1 = min(step.cuboid.x_range[1], 50)
-        y0 = max(step.cuboid.y_range[0], -50)
-        y1 = min(step.cuboid.y_range[1], 50)
-        z0 = max(step.cuboid.z_range[0], -50)
-        z1 = min(step.cuboid.z_range[1], 50)
+        x0 = max(step.cuboid.xa, -50)
+        x1 = min(step.cuboid.xb, 50)
+        y0 = max(step.cuboid.ya, -50)
+        y1 = min(step.cuboid.yb, 50)
+        z0 = max(step.cuboid.za, -50)
+        z1 = min(step.cuboid.zb, 50)
         for x in range(x0, x1 + 1):
             for y in range(y0, y1 + 1):
                 for z in range(z0, z1 + 1):
