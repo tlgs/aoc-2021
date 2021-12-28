@@ -1,5 +1,9 @@
-"""Day 22: Reactor Reboot"""
-import collections
+"""Day 22: Reactor Reboot
+
+Algorithm:
+    Inclusion-exclusion principle and some recursion; General idea explained here:
+    <https://www.reddit.com/r/adventofcode/comments/rlxhmg/2021_day_22_solutions/hpkrwaw/>
+"""
 import re
 import sys
 from typing import NamedTuple
@@ -24,6 +28,7 @@ class Cuboid(NamedTuple):
         if xa <= xb and ya <= yb and za <= zb:
             return Cuboid(xa, xb, ya, yb, za, zb)
 
+    @property
     def volume(self):
         i = self.xb - self.xa + 1
         j = self.yb - self.ya + 1
@@ -31,53 +36,40 @@ class Cuboid(NamedTuple):
         return i * j * k
 
 
-class Step(NamedTuple):
-    on: bool
-    cuboid: Cuboid
-
-
 def parse_input(puzzle_input):
     steps = []
     for line in puzzle_input.splitlines():
         command, coord_list = line.split()
         cuboid = Cuboid(*map(int, re.findall(r"-?\d+", coord_list)))
-        steps.append(Step(command == "on", cuboid))
+        steps.append((command, cuboid))
 
     return steps
 
 
+def volume_sum(steps):
+    if not steps:
+        return 0
+
+    (command, cuboid), *rest = steps
+    if command == "off":
+        return volume_sum(rest)
+
+    intersections = {cuboid.intersect(other) for _, other in rest} - {None}
+    return (
+        cuboid.volume + volume_sum(rest) - volume_sum([("", i) for i in intersections])
+    )
+
+
 def part_one(steps):
-    cubes = set()
-    for step in steps:
-        x0, x1, y0, y1, z0, z1 = step.cuboid
+    def out_of_bounds(step):
+        _, (xa, xb, ya, yb, za, zb) = step
+        return xa < -50 or xb > 50 or ya < -50 or yb > 50 or za < -50 or zb > 50
 
-        if x0 < -50 or x1 > 50 or y0 < -50 or y1 > 50 or z0 < -50 or z1 > 50:
-            continue
-
-        for x in range(x0, x1 + 1):
-            for y in range(y0, y1 + 1):
-                for z in range(z0, z1 + 1):
-                    if step.on:
-                        cubes.add((x, y, z))
-                    else:
-                        cubes.discard((x, y, z))
-
-    return len(cubes)
+    return volume_sum([s for s in steps if not out_of_bounds(s)])
 
 
 def part_two(steps):
-    counts = collections.Counter()
-    for step in steps:
-        new_counts = collections.Counter()
-        for old, v in counts.items():
-            if inter := step.cuboid.intersect(old):
-                new_counts[inter] -= v
-        if step.on:
-            new_counts[step.cuboid] += 1
-
-        counts.update(new_counts)
-
-    return sum(k.volume() * v for k, v in counts.items())
+    return volume_sum(steps)
 
 
 class Test:
