@@ -25,3 +25,4 @@
 | 19  |  -                                          |        |        |
 | 20  | [Trench Map](20.py)                         | ✓      | ✓      |
 | 21  | [Dirac Dice](21.py)                         | ✓      | ✓      |
+| 22  | [Reactor Reboot](22.py)                     | ✓      | ✓      |
