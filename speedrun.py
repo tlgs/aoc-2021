@@ -1,6 +1,7 @@
 import argparse
 import collections
 import itertools
+import statistics
 import sys
 import timeit
 
@@ -202,6 +203,25 @@ def day06(filename="data/06.txt"):
 
     assert part_one == 360268
     assert part_two == 1632146183902
+
+
+def day07(filename="data/07.txt"):
+    with open(filename) as f:
+        crabs = [int(x) for x in f.read().split(",")]
+
+    xtilde = round(statistics.median(crabs))
+    part_one = sum(abs(y - xtilde) for y in crabs)
+
+    xbar = statistics.mean(crabs)
+    cost = []
+    for x in map(int, [xbar - 0.5, xbar + 0.5]):
+        v = sum((abs(y - x) * (abs(y - x) + 1)) // 2 for y in crabs)
+        cost.append(v)
+
+    part_two = min(cost)
+
+    assert part_one == 343441
+    assert part_two == 98925151
 
 
 def main():
